@@ -11,18 +11,24 @@ worldgross = {}
 
 with open('worldgrossco2.csv', 'rb') as csvfile:
     worldgrossreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for row in worldgrossreader:
-    	c+=1
-     	worldgross[c] = row
+    for row in worldgrossreader:    	
+     	if c != 0:
+     	# 	print c
+    		# print row
+    		worldgross[c-1] = row
+     	c+=1
 
 with open('worldpercap.csv', 'rb') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
     for row in spamreader:
-    	d+=1
-     	worldpercap[d] = row
+    	if d != 0:
+    		# print d
+    		# print row
+    		worldpercap[d-1] = row	     	
+     	d+=1
 
-# print worldgross
-# print worldpercap[1][2]
+print worldgross
+print worldpercap
 
 # [1][0] = country numerical id (exclude)
 # [1][1] = country name
@@ -36,9 +42,9 @@ crnt_master = json.loads(worldjson)
 crnt_master["countries"] = {}
 crnt_countries = crnt_master["countries"]
 
-lencap = len(worldpercap) + 1
+lencap = len(worldpercap)
 
-for x in range(2, (lencap)):
+for x in range(0, (lencap)):
 	print x
 	print worldpercap[x]
 
