@@ -140,7 +140,7 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 				.call(xAxis1);		
 
 			// define the svg variables
-			var circles = svg.selectAll("circle")
+			var circles = svg.selectAll("circle.y13")
 				.data(statesPlus)
 
 			var textB = svg.selectAll("text.bubbles")
@@ -156,7 +156,6 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 			   	.attr("cx", function(d) {
 			   		return xScale1(d.data[type].y13)
 			    })			 				
-
 
 			textB
 				.transition()
@@ -192,11 +191,11 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 				.attr("class", function(d) {
 			    	console.log(d)
 			    	if (d.type === "CTRY") {
-			    		return "ctry"	
+			    		return "ctry y13"	
 			    	} else if (d.type === "ECON") {
-			    		return "econ"
+			    		return "econ y13"
 			    	} else {
-			    		return "names"
+			    		return "y13"
 			    	};			    	
 			    })
 			

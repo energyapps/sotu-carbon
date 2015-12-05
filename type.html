@@ -1,0 +1,41 @@
+---
+layout: default2
+---
+<style type="text/css">
+/*	.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-selected { background: #F0F0F0; }
+.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+.autocomplete-group { padding: 2px 5px; }
+.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
+*/
+
+body {
+	background-color: blue;	
+}
+
+input#autocomplete {
+	border: 1px solid white; 
+    padding: 15px;
+    background: rgb(181,227,244);
+    /*margin: 0 0 10px 0;*/
+}
+
+</style>
+
+<input type="text" name="country" id="autocomplete"/>
+
+<script type="text/javascript">
+var countries = [
+   { value: 'Andorra', data: 'AD' },  
+   { value: 'Zimbabwe', data: 'ZZ' }
+];
+
+$('#autocomplete').autocomplete({
+    lookup: countries,
+    onSelect: function (suggestion) {
+        alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+    }
+});
+	
+</script>
