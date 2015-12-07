@@ -104,8 +104,7 @@
 	/*Change Tabs */
 	#tabs {
 		position: absolute;
-		width: 100%;
-		padding-right: 95px;
+		width: 100%;		
 	}
 
 	#tabs .tab, #tabs .about_tab {
@@ -245,8 +244,26 @@
 		right: 0px;
 	}
 
+	sup, sub {
+	   vertical-align: baseline;
+	   position: relative;
+	   top: 0em;
+	}
+	sub { top: -0.1em; }
+
+	h2 sub {
+		font-size: 70% !important;
+	}
+
 @media only screen and (max-width: 668px) { 
 	#car_cont {display: none}
+	.headline {
+    	padding-right: 15px;
+    	text-align: center !important;
+    }
+    .headline h2 {
+    	text-align: center;
+    }
 }
 
 @media only screen and (min-width: 1030px) { 
@@ -264,5 +281,6 @@
 		fill:rgb(152,152,152);
 		padding-top: 5px;
 	}
+
 
 }
