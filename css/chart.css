@@ -51,7 +51,6 @@
 	}
 
 	.countryBox {
-		border: 1px solid white; 
 	    padding: 5px;		    
 	    background: rgb(225,225,225);
 	    float: left;
@@ -105,6 +104,8 @@
 	/*Change Tabs */
 	#tabs {
 		position: absolute;
+		width: 100%;
+		padding-right: 95px;
 	}
 
 	#tabs .tab, #tabs .about_tab {
@@ -167,7 +168,7 @@
 		font-family: "Avenir LT W02 85 Heavy",verdana,sans-serif;
 		color: #fff;
 		font-size: 14px;
-
+		/*height: 52px;*/
 	}
 
 	#chart_titles_inner {		
@@ -227,6 +228,31 @@
 		/*fill: pink !important;*/
 	}
 
+	#car_cont {
+		position: absolute;		    
+	    right: 0px;
+	    top: -218px;	    
+	    padding-right: 20px;
+	}
+
+	#car {
+		position: relative;
+	    width: 427px;
+	    height: 218px;	    
+		z-index: -1;
+		height: auto;
+		top: 0px;
+		right: 0px;
+	}
+
+@media only screen and (max-width: 668px) { 
+	#car_cont {display: none}
+}
+
+@media only screen and (min-width: 1030px) { 
+	#car_cont {display: none}
+}
+		
 @media only screen and (max-width: 470px) { 
 	#about {
 		display: none;
