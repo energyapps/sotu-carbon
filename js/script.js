@@ -87,33 +87,42 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 		d3.select("#about").on("click", function() {
 			// d3.selectAll(".tab").attr("class","tab")
 			this.className = "about_tab active"			
-			d3.select("#about_extend").attr("class","active");
+			// d3.select("#about_extend").attr("class","active");
+			$("#about_extend").addClass("active");
+			$("#about_extend").css("display","block");
 		});
 
 		d3.selectAll(".xBox").on("click", function(){				
 			d3.select(this.parentNode).remove();
 		})
 
+		//remove about on click out
 		$(document).on('click', function(event) {
 		  if (!$(event.target).closest('#about').length) {
-		    d3.select("#about_extend").attr("class","");
+		    // d3.select("#about_extend").attr("class","");
 			d3.select("#about").attr("class","about_tab")
+			$("#about_extend").css("display","none");
 		  }
 		});
+
+		
 
 		$('#autocompletez').autocomplete({
 		    lookup: countriesGlobal,
 		    lookupLimit: 10,
 		    maxHeight:350,
 		    showNoSuggestionNotice: true,
-		    noSuggestionNotice: "Can't find your country? Click About the Data to learn more.",
+		    noSuggestionNotice: function(){		    	
+		    	return "Can't find your country? Click About the Data below to learn more."	
+		    },
 		    onSelect: function (suggestion) {
 		    	
 		    	var indexy = suggestion.indexy;
 
 		 		CountryClick(statesPlusGlobal,indexy)
 		    }
-		});
+		});		
+
 	});
 });
 
@@ -195,8 +204,6 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			// reassign a reference of the data
 			var	statesPlus = x;
 
-
-
 			// Scales and Axis updates
 
 			if (j===1) {
@@ -212,7 +219,8 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 					.ticks(3)
 			} else {
 				var xScale1 = d3.scale.log()
-					.domain([1,100000])
+					.domain([1, d3.max(statesPlus, function(d) {                 	
+	                	return +d.data[type].y13; })]) 
 	                .range([AxisPaddingLeft,w-(StandardPadding*2)]);	
 
                	var xAxis1 = d3.svg.axis()

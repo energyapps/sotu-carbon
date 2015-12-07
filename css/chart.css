@@ -108,7 +108,7 @@
 	}
 
 	#tabs .tab, #tabs .about_tab {
-		background-color: rgb(17,114,161);
+		background-color: rgb(48,50,51);
 		position: relative;
 		margin-left: 15px;
 		float: left;
@@ -140,8 +140,8 @@
 	 	display: none
 	}
 
-	#tabs .tab.active, .about_tab.active {
-		background-color: rgb(48,50,51) !important;
+	#tabs .tab.active, .about_tab.active {		
+		background-color: rgb(17,114,161) !important;
 	}
 
 	#about_extend.active{
@@ -161,7 +161,7 @@
 
 	#chart_titles {
 		width: 100%;
-		background-color: rgb(48,50,51);
+		background-color: rgb(17,114,161);
 		margin-top: 30px;
 		font-family: "Avenir LT W02 85 Heavy",verdana,sans-serif;
 		color: #fff;
@@ -171,8 +171,8 @@
 
 	#chart_titles_inner {		
 		padding-top: 15px;
-		padding-bottom: 15px;
-		text-align: left;
+		padding-bottom: 12px;
+		/*text-align: left;*/
 		clear: both;
 		text-align: center;
 		padding-left: 15px;		
