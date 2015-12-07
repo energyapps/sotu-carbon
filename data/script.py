@@ -45,7 +45,8 @@ for i in range(0, len(states)):
 	stateabbrev = states[i]['stateabbrev']
 	crnt_states[i] = {}
 	crnt_states[i]['id'] = states[i]['stateabbrev']
-	crnt_states[i]['name'] = states[i]['state']
+	crnt_states[i]['value'] = states[i]['state']
+	crnt_states[i]['indexy'] = i
 	crnt_states[i]['data'] = {}
 	data = crnt_states[i]['data']
 	data['gross'] = {}
@@ -70,5 +71,5 @@ crnt_master["source"] = 'EIA Climate Data'
 crnt_master["type"] = 'Metric Tonnes CO2'
 
 
-with open('usaco2.json', 'wb') as f:
+with open('usaco2test.json', 'wb') as f:
     json.dump(crnt_master, f)	

@@ -1,17 +1,18 @@
 
 	// define globals first
 	var statesPlusGlobal = [];
+	var countriesGlobal = [];
 
 	//indexes, Width and height, Padding, parameters
 	var q = 0; // Number of runs?
 	var o = 0;
-	var j = 1; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
+	var j = 0; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
 	var add = 0; // index How many countries are added.
 	// var w = 1000;
 	var w = parseInt(d3.select("#master_container").style("width"))
 	var h = 1000;
 	var AxisPaddingTop = 20;
-	var AxisPaddingLeft = 120;
+	var AxisPaddingLeft = 200;
 	var StandardPadding = 20;
 	var BubblePadding = 3;
 	var r = 5;
@@ -37,9 +38,15 @@ function randomIntFromInterval(min,max)
     return Math.floor(Math.random()*(max-min+1)+min);
 }
 
+function LookUp (indexy) {
+	console.log(statesPlusGlobal[52])
+	console.log(indexy)
+}
 
-d3.json("/data/usaco2.json", function(error, usdata) {
-	d3.json("/data/worldco2.json", function(error, worlddata) {
+
+
+d3.json("/data/usaco2test.json", function(error, usdata) {
+	d3.json("/data/worldco2test.json", function(error, worlddata) {
 			
 		var stData = usdata.states;
 
@@ -47,20 +54,32 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 			statesPlusGlobal.push(stData[i])
 		};
 
+		var LookCountry = worlddata.countries;
+
+		for (i in LookCountry) {
+			countriesGlobal.push(LookCountry[i])			
+		}					
+
 		statesPlus = statesPlusGlobal;
 
 		initial(statesPlus)
 
 		countries = worlddata.countries;
 
-		d3.select("#MetricClick").on("click", function() {
-			//DONT DEFINE J HERE?!?!
-			// DONT DEFINE DATA AS AN Arg?
+		d3.selectAll(".tab").on("click", function() {
+			d3.selectAll(".tab").attr("class","tab")
+
+			this.className = "tab active"
 			MetricClick(statesPlus)
 		});
-
-		d3.select("#CountryClick").on("click", function() {
-			CountryClick(statesPlus,randomIntFromInterval(1,100))
+	
+		$('#autocompletez').autocomplete({
+		    lookup: countriesGlobal,
+		    onSelect: function (suggestion) {
+		    	console.log(statesPlusGlobal)
+		    	var indexy = suggestion.indexy;
+		 		CountryClick(statesPlusGlobal,indexy)
+		    }
 		});
 	});
 });
@@ -71,7 +90,11 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 		};
 
 		// Fires when a new country is added or subtracted
-		function CountryClick(data,x) {			
+		function CountryClick(data,x) {	
+
+				// How to prevent doubles?
+				// prevent XXXX's
+				// Prevent USA
 
 			if (add === AddCountries) {
 				add = 0;
@@ -85,6 +108,8 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 
 			// or could switch to length
 			data[indexIs] = countries[x]			
+
+			d3.selectAll("div.countryBox")
 
 			// Run it boyy
 			update(data,j)
@@ -171,7 +196,7 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 				.transition()
 				.duration(2000)
 				.text(function(d) {
-					return d.name;
+					return d.value;
 				})								
 
 			// Now you tell it what to do when something ENTERS for the first time!
@@ -179,7 +204,7 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 			    .enter()
 			    .append("circle")
 			    .attr("id",function(d){
-			   		return "a"+d.name
+			   		return "a"+d.value
 			   	})
 			    .attr("r", r)
 			    .attr("cx", function(d) {
@@ -188,8 +213,7 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 			    .attr("cy",function(d,i){			    	
 			   		return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding))
 				})
-				.attr("class", function(d) {
-			    	console.log(d)
+				.attr("class", function(d) {			    	
 			    	if (d.type === "CTRY") {
 			    		return "ctry y13"	
 			    	} else if (d.type === "ECON") {
@@ -219,8 +243,7 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 			textN
 			    .enter()
 			    .append("text")
-			    .attr("class", function(d) {
-			    	console.log(d)
+			    .attr("class", function(d) {			    	
 			    	if (d.type === "CTRY") {
 			    		return "names ctry"	
 			    	} else if (d.type === "ECON") {
@@ -230,7 +253,7 @@ d3.json("/data/usaco2.json", function(error, usdata) {
 			    	};			    	
 			    })			    	
 			    .text(function(d) {
-					return d.name;
+					return d.value;
 				})			
 			    .attr("y",function(d, i){
 					return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)

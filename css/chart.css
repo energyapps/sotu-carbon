@@ -25,3 +25,113 @@
 	.y13 {
 		fill: rgb(40,169,223)
 	}
+
+	input#autocompletez {
+        font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
+	    color:#000;
+	    width: 300px;
+	    font-size: 18px;
+	}
+
+	.rowDOE {
+		margin-bottom:0px !important;
+	}
+
+	input#autocompletez {
+		border: 1px solid white; 
+	    padding: 10px;	
+	    margin: 15px;
+	    margin-bottom: 0px;
+	    background: rgb(181,227,244);
+	}
+
+	#countryBoxes {
+		margin: 15px;
+	}
+
+	.countryBox {
+		border: 1px solid white; 
+	    padding: 5px;		    
+	    background: rgb(225,225,225);
+	    float: left;
+	 	color:#000;
+	    min-width: 160px;
+	    font-size: 14px;   
+	    font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
+	}
+
+    .autocomplete-suggestions {
+    	font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
+    	background-color: #e1f4fb;
+	 	color:#000;   
+	 	cursor: pointer;
+	 	font-size: 18px;
+    }
+
+    .autocomplete-suggestion {
+    	padding-left: 10px;
+    	padding-top: 5px;    	
+    	padding-bottom: 5px;
+    }
+
+    .autocomplete-suggestion strong {
+    	color: #2eb0e0;
+    }
+
+    .autocomplete-suggestion:hover {
+    	background: rgb(181,227,244);	
+    	cursor: pointer;
+    }
+
+	/*Change Tabs */
+	#tabs {
+		position: absolute;
+	}
+
+	#tabs .tab {
+		background-color: rgb(17,114,161);
+		position: relative;
+		margin-left: 15px;
+		float: left;
+		padding: 5px 10px 3px 10px;
+		cursor: pointer;		
+		top: -28px;
+		-webkit-touch-callout: none;
+	    -webkit-user-select: none;
+	    -khtml-user-select: none;
+	    -moz-user-select: none;
+	    -ms-user-select: none;
+	    user-select: none;
+	}
+
+	#tabs .tab.active {
+		background-color: rgb(48,50,51);
+	}
+
+	#chart_titles {
+		width: 100%;
+		background-color: rgb(48,50,51);
+		margin-top: 50px;
+		font-family: "Avenir LT W02 85 Heavy",verdana,sans-serif;
+		color: #fff;
+		font-size: 14px;
+	}
+
+	#chart_titles_inner {		
+		padding-top: 15px;
+		padding-bottom: 15px;
+		text-align: left;
+		clear: both;
+		text-align: center;
+		padding-left: 15px;		
+
+	}
+
+	#region {
+		width: 200px;
+		float: left;		
+	}
+
+	#emissions {
+		overflow: hidden;
+	}

@@ -2,16 +2,9 @@
 layout: default2
 ---
 <style type="text/css">
-/*	.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
-.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
-.autocomplete-selected { background: #F0F0F0; }
-.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
-.autocomplete-group { padding: 2px 5px; }
-.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
-*/
 
 body {
-	background-color: blue;	
+	background-color: pink;
 }
 
 input#autocomplete {
@@ -26,16 +19,38 @@ input#autocomplete {
 <input type="text" name="country" id="autocomplete"/>
 
 <script type="text/javascript">
-var countries = [
-   { value: 'Andorra', data: 'AD' },  
-   { value: 'Zimbabwe', data: 'ZZ' }
-];
 
-$('#autocomplete').autocomplete({
-    lookup: countries,
-    onSelect: function (suggestion) {
-        alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
-    }
-});
+
+var countriesGlobal = [];
+var statesPlusGlobal = [];
+var statesPlus;
+	var countries;
+
+d3.json("/data/usaco2.json", function(error, usdata) {
+	d3.json("/data/worldco2type.json", function(error, worlddata) {
+			
+		var countries = worlddata.countries;
+
+		for (i in countries) {
+			countriesGlobal.push(countries[i])			
+		}					
+		
+		$('#autocomplete').autocomplete({
+		    lookup: countriesGlobal,
+		    onSelect: function (suggestion) {
+		 		LookUp(suggestion)       
+		    }
+		});
+
+	});
+});	
+
+function LookUp (selection) {
+	console.log(selection)	
+	alert('You selected: ' + selection.value + ', ' + selection.data.gross.y13);
+}
+
+
+
 	
 </script>

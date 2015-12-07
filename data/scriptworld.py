@@ -50,8 +50,9 @@ for x in range(0, (lencap)):
 
 	crnt_countries[x] = {}
 	crnt_countries[x]['id'] = worldgross[x][2]
-	crnt_countries[x]['name'] = worldgross[x][1]
+	crnt_countries[x]['value'] = worldgross[x][1]
 	crnt_countries[x]['type'] = worldgross[x][6]
+	crnt_countries[x]['indexy'] = x
 	crnt_countries[x]['data'] = {}
 	data = crnt_countries[x]['data']
 	data['gross'] = {}
@@ -70,5 +71,5 @@ crnt_master["source"] = 'IEA, 2015 (c) OECD/IEA 2015'
 crnt_master["type"] = 'Metric Tonnes CO2'
 
 
-with open('worldco2.json', 'wb') as f:
+with open('worldco2test.json', 'wb') as f:
     json.dump(crnt_master, f)	

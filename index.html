@@ -16,16 +16,41 @@ layout: default
             <!-- <select id="mySelect"></select> -->
   <div id="master_container" class="m_container">        
 
-    <div class="rowDOE">
+    <!-- <div class="rowDOE">
       <div class="large-12 columnsDOE headline">
         <center><h2>This is the <span class="green-text">foundation</span> template</h2></center>
       </div>
       <div class="large-12 columnsDOE subheadline">
         <p> This is interesting and <span class="has-tip tip-bottom" data-tooltip title="We define total per capita energy consumption as someone's annual transportation and residential energy needs combined.">important</span> information.</p>
       </div>
-    </div>
-    <button id="MetricClick">Change Metric</button>
-    <button id="CountryClick">Change Country</button>
-    
+    </div> -->
 
+    <div class="rowDOE">
+      <div class="large-12 columnsDOE headline">
+        <!-- <h2>How Do Your State's CO2 Emissions Stack up to the Countries at COP21</h2> -->
+        <h2>How much CO2 does each state and county produce?</h2>
+        <p>The hungry horse from Westminster Abbey trapes around the cork factory inspecting hams.</p>
+      </div>
+    </div>
+    <div class="rowDOE">
+      <input type="text" name="country" id="autocompletez" placeholder="Type a Country"/>
+    </div>
+    <div class="rowDOE" id="countryBoxes">    
+      <div class="countryBox">Russia</div>  
+      <div class="countryBox">South Africa</div>  
+      <div class="countryBox">Botswana</div>  
+      <div class="countryBox">OECD Asia Oceania</div>  
+    </div>  
+    <div class="rowDOE" id="chart_titles">
+      <div id="tabs">
+        <div id="percap" class="tab">Per Capita</div>
+        <div id="gross" class="tab active">Gross</div>
+      </div>
+      <div class="rowDOE" id="chart_titles_inner">
+        <div id="region">Country</div>
+        <div id="emissions">CO2 Emissions</div>
+        <!-- <div id="percent">% Change</div> -->
+      </div>
+    </div>
+    <div class="rowDOE"></div>
 </div>    
