@@ -11,15 +11,17 @@ var o = 0;
 var j = 1; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
 var add = 0; // index How many countries are added.
 // var w = 1000;
-var w = parseInt(d3.select("#master_container").style("width"))
-var h = 1000;
+
 var AxisPaddingTop = 20;
 var AxisPaddingLeft = 200;
 var StandardPadding = 20;
 var BubblePadding = 3;
 var r = 5;
 var AddCountries = 10; //How many countries can be added		
-		
+var totes = 51 + AddCountries
+var w = parseInt(d3.select("#master_container").style("width"))
+var h = (AxisPaddingTop + StandardPadding/2 + ((totes)*2*r) + (totes*BubblePadding)+BubblePadding*1.5+20)
+
 var statesPlus;
 var countries;
 
@@ -396,7 +398,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 		  	// Remove old elements as needed.
 			circles.exit().remove();			
 			textN.exit().remove();	
-			pymChild.sendHeight();		
+
 		}			
 
 		function sortFunction (statesPlus,type) {		
