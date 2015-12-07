@@ -16,16 +16,17 @@
 		padding-top: 10px;
 	}
 
+	.y13 {
+		fill: rgb(40,169,223)
+	}
+
 	.econ {
 		fill: green;
 	}
 
 	.ctry {
-		fill: blue;
-	}
-
-	.y13 {
-		fill: rgb(40,169,223)
+		/*fill: #a9df28;*/
+		fill: #57a218;
 	}
 
 	input#autocompletez {
@@ -91,7 +92,7 @@
 	 	font-size: 18px;
     }
 
-    .autocomplete-suggestion {
+    .autocomplete-suggestion, .autocomplete-no-suggestion {
     	padding-left: 10px;
     	padding-top: 5px;    	
     	padding-bottom: 5px;
@@ -99,6 +100,10 @@
 
     .autocomplete-suggestion strong {
     	color: #2eb0e0;
+    }
+
+    .autocomplete-no-suggestion {
+    	font-style: italic;
     }
 
     .autocomplete-suggestion:hover {
@@ -192,7 +197,26 @@
 		overflow: hidden;
 	}
 	/*TEXT AND D3 shiz*/
-	text.names {
+	text.names, text.popup {
 		font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
-	    color:#000;		
+	    fill:#000;		
+	    font-size:12px;	    
+	    transition: fill 100ms ease-out;
 	}
+
+	text.names.hov1 {
+		fill: #2eb0e0;
+		transition: fill 100ms ease-out;
+	}
+
+	text.names.hov2 {
+		fill: #57a218;
+		transition: fill 100ms ease-out;
+	}
+
+	circle:hover {
+		cursor: pointer;
+		transition: fill 100ms ease-out;
+		/*fill: pink !important;*/
+	}
+
