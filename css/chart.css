@@ -125,17 +125,17 @@
 
 	#about_extend {
 		max-width: 900px;
-		min-width: 300px;
+		min-width: 350px;
 		padding: 10px;
 		font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
     	background-color: #e1f4fb;
 	 	color:#000;   	 	
 	 	font-size: 12px;
 	 	background: rgb(225,225,225);
-	 	max-height: 300px;
-	 	overflow: scroll;
+	 	max-height: 500px;
+	 	/*overflow-y: scroll;*/
 	 	position: absolute;
-	 	top: 28px;
+	 	top: 35px;
 	 	right: 0px;	 
 	 	display: none
 	}
@@ -154,9 +154,10 @@
 	border-left: 5px solid transparent;
 	border-right: 5px solid transparent;	
 	/*border-bottom: 5px solid rgb(225,225,225);*/
-	border-bottom: 5px solid pink;
+	border-bottom: 5px solid rgb(225,225,225);;
 	position: absolute;
 	top: -5px;
+	right: 10px;
 }
 
 	#chart_titles {
