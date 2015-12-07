@@ -35,6 +35,17 @@ svg.append("g")
     .attr("class", "axis")  //Assign "axis" class
     .attr("transform", "translate(0," + (AxisPaddingTop + 10) + ")")
 
+var linez = svg
+	.append("line")
+	.attr("class","dotted1")
+	.attr("x1",AxisPaddingLeft - StandardPadding)
+	.attr("x2",AxisPaddingLeft - StandardPadding)
+	.attr("y1","0")
+	.attr("stroke","rgb(61,57,58)")
+	.attr("stroke-width","2px")
+	.attr("stroke-dasharray","1,4")
+	.attr("stroke-linecap","round");
+
 function randomIntFromInterval(min,max)
 {
     return Math.floor(Math.random()*(max-min+1)+min);
@@ -178,6 +189,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 
 			// Run it boyy
 			update(data,j)
+			pymChild.sendHeight();
 		};
 
 		//DONT DEFINE J HERE?!?!
@@ -194,6 +206,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 				};
 
 			update(data,j)
+			pymChild.sendHeight();
 		};
 
 		function update(x,j) {				
@@ -283,7 +296,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 				.duration(1000)
 				.text(function(d) {
 					return d.value;
-				})								
+				})	
 
 			// Now you tell it what to do when something ENTERS for the first time!
 			circles   
@@ -366,21 +379,13 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 					return 0
 				});
 
-			// ADD A DOTTED LINE HERE
-			svg
-				.append("line")
-				.attr("class","dotted1")
-				.attr("x1",AxisPaddingLeft - StandardPadding)
-				.attr("x2",AxisPaddingLeft - StandardPadding)
-				.attr("y1","0")
+			// update A DOTTED LINE HERE
+			linez
 				.attr("y2", function(){
 					var i = statesPlus.length
 					return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)
 				})
-				.attr("stroke","rgb(61,57,58)")
-				.attr("stroke-width","2px")
-				.attr("stroke-dasharray","1,4")
-				.attr("stroke-linecap","round");
+				
 
 			// Do the second layer of transitions after the first fires
 			circles
