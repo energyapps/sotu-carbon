@@ -62,9 +62,9 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 
 		statesPlus = statesPlusGlobal;
 
-		initial(statesPlus)
-
 		countries = worlddata.countries;
+
+		initial(statesPlus)
 
 		d3.selectAll(".tab").on("click", function() {
 			d3.selectAll(".tab").attr("class","tab");
@@ -128,7 +128,13 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 
 		// Fires on Initial Load.
 		function initial(data) {
-			update(data,j)
+			CountryClick(data,160) //add World
+			CountryClick(data,156) // EU
+			CountryClick(data,117) // China
+			CountryClick(data,122) // Brazil
+			CountryClick(data,153) // UAE
+
+			// update(data,j)
 		};
 
 		// Fires when a new country is added or subtracted
@@ -146,6 +152,9 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			// first go from 0 to 1, then 1 to 2, 3 to 4, 4 to 0 (above ), 0 to 1;
 			add +=1;
 			var indexIs = 51+add;
+
+			console.log(x)
+			console.log(countries)
 
 			// or could switch to length
 			data[indexIs] = countries[x];			
