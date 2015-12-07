@@ -398,7 +398,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 		  	// Remove old elements as needed.
 			circles.exit().remove();			
 			textN.exit().remove();	
-
+			pymChild.sendHeight();
 		}			
 
 		function sortFunction (statesPlus,type) {		
