@@ -136,7 +136,7 @@
 	 	overflow: scroll;
 	 	position: absolute;
 	 	top: 28px;
-	 	left: 0px;	 
+	 	right: 0px;	 
 	 	display: none
 	}
 
@@ -226,3 +226,16 @@
 		/*fill: pink !important;*/
 	}
 
+@media only screen and (max-width: 470px) { 
+	#about {
+		display: none;
+	}
+
+	.axis text {
+		font-family: "Avenir LT W02 85 Heavy",verdana,sans-serif;
+		font-size: 14px;
+		fill:rgb(152,152,152);
+		padding-top: 5px;
+	}
+
+}

@@ -1,35 +1,37 @@
+// Initiate pym
+var pymChild = new pym.Child();
 
-	// define globals first
-	var statesPlusGlobal = [];
-	var countriesGlobal = [];
+// define globals first
+var statesPlusGlobal = [];
+var countriesGlobal = [];
 
-	//indexes, Width and height, Padding, parameters
-	var q = 0; // Number of runs?
-	var o = 0;
-	var j = 1; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
-	var add = 0; // index How many countries are added.
-	// var w = 1000;
-	var w = parseInt(d3.select("#master_container").style("width"))
-	var h = 1000;
-	var AxisPaddingTop = 20;
-	var AxisPaddingLeft = 200;
-	var StandardPadding = 20;
-	var BubblePadding = 3;
-	var r = 5;
-	var AddCountries = 10; //How many countries can be added		
-			
-	var statesPlus;
-	var countries;
+//indexes, Width and height, Padding, parameters
+var q = 0; // Number of runs?
+var o = 0;
+var j = 1; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
+var add = 0; // index How many countries are added.
+// var w = 1000;
+var w = parseInt(d3.select("#master_container").style("width"))
+var h = 1000;
+var AxisPaddingTop = 20;
+var AxisPaddingLeft = 200;
+var StandardPadding = 20;
+var BubblePadding = 3;
+var r = 5;
+var AddCountries = 10; //How many countries can be added		
+		
+var statesPlus;
+var countries;
 
-	//Create SVG element
-	var svg = d3.select("#master_container")
-				.append("svg")
-				.attr("width", w)
-				.attr("height", h);  	
+//Create SVG element
+var svg = d3.select("#master_container")
+			.append("svg")
+			.attr("width", w)
+			.attr("height", h);  	
 
-	svg.append("g")
-	    .attr("class", "axis")  //Assign "axis" class
-	    .attr("transform", "translate(0," + (AxisPaddingTop + 10) + ")")
+svg.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(0," + (AxisPaddingTop + 10) + ")")
 
 function randomIntFromInterval(min,max)
 {
@@ -92,10 +94,6 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			$("#about_extend").css("display","block");
 		});
 
-		d3.selectAll(".xBox").on("click", function(){				
-			d3.select(this.parentNode).remove();
-		})
-
 		//remove about on click out
 		$(document).on('click', function(event) {
 		  if (!$(event.target).closest('#about').length) {
@@ -122,7 +120,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 		 		CountryClick(statesPlusGlobal,indexy)
 		    }
 		});		
-
+	pymChild.sendHeight();
 	});
 });
 
@@ -152,10 +150,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			// first go from 0 to 1, then 1 to 2, 3 to 4, 4 to 0 (above ), 0 to 1;
 			add +=1;
 			var indexIs = 51+add;
-
-			console.log(x)
-			console.log(countries)
-
+		
 			// or could switch to length
 			data[indexIs] = countries[x];			
 			d3.select("#countryBoxes")
@@ -232,10 +227,19 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 	                	return +d.data[type].y13; })]) 
 	                .range([AxisPaddingLeft,w-(StandardPadding*2)]);	
 
-               	var xAxis1 = d3.svg.axis()
-					.scale(xScale1)
-					.orient("top")
-					.ticks(4, ",.1s")
+	            var xAxis1 = d3.svg.axis()
+						.scale(xScale1)
+						.orient("top")
+
+	            if (w <= 500) {
+	            	console.log('g')
+					xAxis1
+						.ticks(2, ",.1s")	            	
+	            } else {
+					xAxis1
+						.ticks(4, ",.1s")
+	            };
+
 			}
 
 			svg.selectAll("g.axis")
@@ -391,7 +395,8 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 
 		  	// Remove old elements as needed.
 			circles.exit().remove();			
-			textN.exit().remove();			
+			textN.exit().remove();	
+			pymChild.sendHeight();		
 		}			
 
 		function sortFunction (statesPlus,type) {		
