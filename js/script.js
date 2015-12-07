@@ -16,9 +16,7 @@
 	var StandardPadding = 20;
 	var BubblePadding = 3;
 	var r = 5;
-	var AddCountries = 4; //How many countries can be added
-	// var dlengthMin = states.length //Need to update
-	// var dlengthMax = dlengthMin + AddCountries;			
+	var AddCountries = 4; //How many countries can be added		
 			
 	var statesPlus;
 	var countries;
@@ -38,9 +36,11 @@ function randomIntFromInterval(min,max)
     return Math.floor(Math.random()*(max-min+1)+min);
 }
 
-d3.json("/data/usaco2test.json", function(error, usdata) {
-	d3.json("/data/worldco2test.json", function(error, worlddata) {
-			
+// d3.json("/data/usaco2test.json", function(error, usdata) {
+// 	d3.json("/data/worldco2test.json", function(error, worlddata) {
+d3.json("../data/usaco2test.json", function(error, usdata) {
+	d3.json("../data/worldco2test.json", function(error, worlddata) {			
+
 		var stData = usdata.states;
 
 		for (i in stData) {
@@ -66,8 +66,6 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 
 		countries = worlddata.countries;
 
-		console.log(d3.select('#emissions')[0][0].innerHTML)
-
 		d3.selectAll(".tab").on("click", function() {
 			d3.selectAll(".tab").attr("class","tab");
 			this.className = "tab active";
@@ -77,9 +75,9 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			// set the metric title
 			var emissions = d3.select('#emissions')[0][0];
 			if (j === 1) {
-				emissions.innerHTML = "Carbon Dioxide Emissions 2013 (Million Metric Tons of CO<sub>2</sub>)";
+				emissions.innerHTML = "Carbon Dioxide Emissions 2013 (Million Metric Tons of CO<sub>2</sub> per geography, logarithmic)";
 			} else {
-				emissions.innerHTML = "Carbon Dioxide Emissions 2013 (Metric Tons of CO<sub>2</sub> per Person, logarithmic) ";	
+				emissions.innerHTML = "Carbon Dioxide Emissions 2013 (Metric Tons of CO<sub>2</sub> per Person) ";	
 			};
 			
 
@@ -244,6 +242,9 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			   	.attr("cx", function(d) {
 			   		return xScale1(d.data[type].y13)
 			    })
+			    .attr("valu",function(d) {
+			   		return d.data[type].y13;
+			   	})
 			   	.attr("class", function(d) {			    	
 			    	if (d.type === "CTRY" || d.type === "ECON") {			    		
 			    		return "ctry y13 " + type	
@@ -268,8 +269,8 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			    .attr("id",function(d){
 			   		return "a"+d.indexy;
 			   	})
-			   	.attr("data-value",function(d) {
-			   		return d.value;
+			   	.attr("valu",function(d) {
+			   		return d.data[type].y13;
 			   	})
 			    .attr("r", r)
 			    .attr("cx", function(d) {
@@ -282,39 +283,35 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			    	if (d.type === "CTRY" || d.type === "ECON") {    		
 			    		return "ctry y13 " + type	
 			    	} 
-			    	// else if (d.type === "ECON") {
-			    	// 	return "econ y13"}
 			    	else {			    		
 			    		return "y13 " + type
 			    	};			    	
 			    })
-			    .on("mouseover",function(d){			    				    	
-			    	var cx = this.cx.animVal.value;
+			    .on("mouseover",function(d){		
+			    	// console.log(this)
+
+					var cx = this.cx.animVal.value;
 			    	var cy = this.cy.animVal.value;
-			    	var dd = d;		    	
-			    	console.log(dd)
+			    	var valu = $(this).attr('valu')	    	
+
 			    	svg.append("text")
 			    		.attr("class","popup")
-			  			.text(function(d) {			
-			  				if (this.className === "y13 percap") {
-			  					return dd.data.percap.y13	
-			  				} else {return dd.data.gross.y13;};		  				
-					   		
+			  			.text(function(d) {		
+			  				return valu;
 					   	})
 					   	.attr("y",function(d, i){
-							return cy
+							return cy;
 						})
 					   	.attr("x", function(d) {
 					   		return cx + 5;
-					    })
+					    })	
 
 					svg.select("text#t" + d.nodeID)
 						.attr("class",function(d){							
 							if (d.nodeID <= 51) {
 								return "names hov1"	
-							} else {return "names hov2"};
-							
-						})						
+							} else {return "names hov2"};				
+						})		
 					
 			    })
 			    .on("mouseout",function(d){
