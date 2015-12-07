@@ -39,7 +39,7 @@ function randomIntFromInterval(min,max)
 // d3.json("/data/usaco2test.json", function(error, usdata) {
 // 	d3.json("/data/worldco2test.json", function(error, worlddata) {
 d3.json("data/usaco2test.json", function(error, usdata) {
-	d3.json("co2/data/worldco2test.json", function(error, worlddata) {			
+	d3.json("data/worldco2test.json", function(error, worlddata) {			
 
 		var stData = usdata.states;
 
