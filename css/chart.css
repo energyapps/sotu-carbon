@@ -20,15 +20,6 @@
 		fill: rgb(40,169,223)
 	}
 
-	.econ {
-		fill: green;
-	}
-
-	.ctry {
-		/*fill: #a9df28;*/
-		fill: #57a218;
-	}
-
 	input#autocompletez {
         font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
 	    color:#000;
@@ -203,6 +194,12 @@
 	    font-size:12px;	    
 	    transition: fill 100ms ease-out;
 	}
+
+	.ctry, .econ {
+		/*fill: #a9df28;*/
+		fill: #57a218;
+	}
+	
 
 	text.names.hov1 {
 		fill: #2eb0e0;

@@ -238,7 +238,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			// Do the updated things first! This is what happens to an update
 			circles
 				.transition()
-			   	.duration(2000)
+			   	.duration(1000)
 			   	.attr("cx", function(d) {
 			   		return xScale1(d.data[type].y13)
 			    })
@@ -257,7 +257,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 
 			textN
 				.transition()
-				.duration(2000)
+				.duration(1000)
 				.text(function(d) {
 					return d.value;
 				})								
@@ -363,13 +363,13 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 
 			// Do the second layer of transitions after the first fires
 			circles
-				.transition().duration(2000).delay(2000)
+				.transition().duration(1000).delay(1000)
 			    .attr("cy",function(d,i){			  
 			   		return (AxisPaddingTop + StandardPadding/2 + ((d.sortID)*2*r) + (d.sortID*BubblePadding)+BubblePadding/2)
 				})
 
 			textN
-				.transition().duration(2000).delay(2000)
+				.transition().duration(1000).delay(1000)
 				.attr("y",function(d, i){
 			   		return (AxisPaddingTop + StandardPadding/2 + ((d.sortID)*2*r) + (d.sortID*BubblePadding)+BubblePadding*1.5)
 				})
