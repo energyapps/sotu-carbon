@@ -186,6 +186,7 @@
 
 	#emissions {
 		overflow: hidden;
+		padding-right: 30px;
 	}
 	/*TEXT AND D3 shiz*/
 	text.names, text.popup {

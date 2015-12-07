@@ -51,7 +51,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 
 		for (i in LookCountry) {
 			
-			if (LookCountry[i].id === "WWWW" || LookCountry[i].id === "EU28" || LookCountry[i].id === "GG20" ) {
+			if (LookCountry[i].id === "WWWW" || LookCountry[i].id === "EU28" || LookCountry[i].id === "GG20" || LookCountry[i].id === "GG08" ) {
 				countriesGlobal.push(LookCountry[i])	
 			}
 			else if(LookCountry[i].type === "EXCL" || LookCountry[i].type === "ECON" || LookCountry[i].id === "USA") {
@@ -131,8 +131,8 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			CountryClick(data,160) //add World
 			CountryClick(data,156) // EU
 			CountryClick(data,117) // China
-			CountryClick(data,122) // Brazil
 			CountryClick(data,153) // UAE
+			CountryClick(data,124) // Small Country... Morrocco?
 
 			// update(data,j)
 		};
@@ -242,7 +242,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 				.transition() //maybe remove
 				.duration(1000) 
 				// .transform(translate(10,20))
-				.attr("transform","translate(10,30)")
+				.attr("transform","translate(0,30)")
 				.call(xAxis1)
 			
 			// define the svg variables
