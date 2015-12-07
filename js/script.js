@@ -10,8 +10,6 @@ var q = 0; // Number of runs?
 var o = 0;
 var j = 1; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
 var add = 0; // index How many countries are added.
-// var w = 1000;
-
 var AxisPaddingTop = 20;
 var AxisPaddingLeft = 200;
 var StandardPadding = 20;
@@ -210,6 +208,8 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 		};
 
 		function update(x,j) {				
+			var w = parseInt(d3.select("#master_container").style("width"))
+
 			// interpret j
 			if (j  === 0) {
 				var type = "gross"
