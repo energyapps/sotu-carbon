@@ -16,7 +16,7 @@
 	var StandardPadding = 20;
 	var BubblePadding = 3;
 	var r = 5;
-	var AddCountries = 4; //How many countries can be added		
+	var AddCountries = 10; //How many countries can be added		
 			
 	var statesPlus;
 	var countries;
@@ -75,9 +75,9 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			// set the metric title
 			var emissions = d3.select('#emissions')[0][0];
 			if (j === 1) {
-				emissions.innerHTML = "Carbon Dioxide Emissions 2013 (Million Metric Tons of CO<sub>2</sub> per geography, logarithmic)";
+				emissions.innerHTML = "Annual Carbon Dioxide Emissions 2013 (Million Metric Tons of CO<sub>2</sub> per geography, logarithmic)";
 			} else {
-				emissions.innerHTML = "Carbon Dioxide Emissions 2013 (Metric Tons of CO<sub>2</sub> per Person) ";	
+				emissions.innerHTML = "Annual Carbon Dioxide Emissions 2013 (Metric Tons of CO<sub>2</sub> per Person) ";	
 			};
 			
 
@@ -296,8 +296,6 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			    	};			    	
 			    })
 			    .on("mouseover",function(d){		
-			    	// console.log(this)
-
 					var cx = this.cx.animVal.value;
 			    	var cy = this.cy.animVal.value;
 			    	var valu = $(this).attr('valu')	    	
@@ -325,7 +323,7 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			    .on("mouseout",function(d){
 			    	d3.selectAll("text.popup").transition().duration(1000).style("opacity", 0).remove();
 			    	d3.selectAll("text.hov1").transition().duration(1000).attr("class","names")
-			    	d3.selectAll("text.hov2").transition().duration(1000).attr("class","names")
+			    	d3.selectAll("text.hov2").transition().duration(1000).attr("class","names econ")
 			    })
 
 			textN

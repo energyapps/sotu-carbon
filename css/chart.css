@@ -199,7 +199,6 @@
 		/*fill: #a9df28;*/
 		fill: #57a218 !important;
 	}
-	
 
 	text.names.hov1 {
 		fill: #2eb0e0;
@@ -207,9 +206,18 @@
 	}
 
 	text.names.hov2 {
-		fill: #57a218;
+		fill: #7bdf27;
 		transition: fill 100ms ease-out;
 	}
+
+	/*define USA color*/
+	#t44, #a44 {
+		fill:#a21857;
+	}
+
+	#t44.hov1, #a44:hover {
+		fill:#df277b;
+	}	
 
 	circle:hover {
 		cursor: pointer;
