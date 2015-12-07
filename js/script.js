@@ -384,7 +384,12 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 				.attr("y2", function(){
 					var i = statesPlus.length
 					return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)
-				})
+				});
+			// update height of graphic
+			svg.attr("height",function(){
+					var i = statesPlus.length
+					return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)
+				});
 				
 
 			// Do the second layer of transitions after the first fires
