@@ -6,7 +6,7 @@
 	//indexes, Width and height, Padding, parameters
 	var q = 0; // Number of runs?
 	var o = 0;
-	var j = 0; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
+	var j = 1; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
 	var add = 0; // index How many countries are added.
 	// var w = 1000;
 	var w = parseInt(d3.select("#master_container").style("width"))
@@ -31,19 +31,12 @@
 
 	svg.append("g")
 	    .attr("class", "axis")  //Assign "axis" class
-	    .attr("transform", "translate(0," + (AxisPaddingTop) + ")")
+	    .attr("transform", "translate(0," + (AxisPaddingTop + 10) + ")")
 
 function randomIntFromInterval(min,max)
 {
     return Math.floor(Math.random()*(max-min+1)+min);
 }
-
-function LookUp (indexy) {
-	console.log(statesPlusGlobal[52])
-	console.log(indexy)
-}
-
-
 
 d3.json("/data/usaco2test.json", function(error, usdata) {
 	d3.json("/data/worldco2test.json", function(error, worlddata) {
@@ -67,17 +60,39 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 		countries = worlddata.countries;
 
 		d3.selectAll(".tab").on("click", function() {
-			d3.selectAll(".tab").attr("class","tab")
-
-			this.className = "tab active"
-			MetricClick(statesPlus)
+			d3.selectAll(".tab").attr("class","tab");
+			this.className = "tab active";
+			d3.select("#about_extend").attr("class","");
+			d3.select("#about").attr("class","about_tab")
+			MetricClick(statesPlus, this.id)
 		});
 	
+		d3.select("#about").on("click", function() {
+			console.log('test')
+			// d3.selectAll(".tab").attr("class","tab")
+			this.className = "about_tab active"			
+			d3.select("#about_extend").attr("class","active");
+		});
+
+		d3.selectAll(".xBox").on("click", function(){				
+			d3.select(this.parentNode).remove();
+		})
+
+		$(document).on('click', function(event) {
+		  if (!$(event.target).closest('#about').length) {
+		    d3.select("#about_extend").attr("class","");
+			d3.select("#about").attr("class","about_tab")
+		  }
+		});
+
 		$('#autocompletez').autocomplete({
 		    lookup: countriesGlobal,
+		    lookupLimit: 10,
+		    maxHeight:350,
 		    onSelect: function (suggestion) {
-		    	console.log(statesPlusGlobal)
+		    	
 		    	var indexy = suggestion.indexy;
+
 		 		CountryClick(statesPlusGlobal,indexy)
 		    }
 		});
@@ -91,15 +106,14 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 
 		// Fires when a new country is added or subtracted
 		function CountryClick(data,x) {	
-
 				// How to prevent doubles?
 				// prevent XXXX's
-				// Prevent USA
-
+				// Prevent USA			
 			if (add === AddCountries) {
 				add = 0;
 				//Remove 53, 54, 55
-				data.splice(53,(AddCountries - 1))				
+				data.splice(52	,(AddCountries - 1))	
+				d3.selectAll(".countryBox").remove();			
 			};
 
 			// first go from 0 to 1, then 1 to 2, 3 to 4, 4 to 0 (above ), 0 to 1;
@@ -107,9 +121,29 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			var indexIs = 51+add;
 
 			// or could switch to length
-			data[indexIs] = countries[x]			
+			data[indexIs] = countries[x];			
+			d3.select("#countryBoxes")
+				.append("div")
+				.text(countries[x].value)
+				.attr('class','countryBox')
+					.append("div")
+					.attr('class',"xBox")
+					.attr('id',countries[x].id)
+					.text("x")
+					.on("click",function(d){
+						d3.select(this.parentNode).remove();						
+						add -=1;
+						
+						for (var i = 51; i < data.length; i++) {
+							console.log(data[i].id)
+							if (data[i].id === this.id) {
+								console.log(data[i])
+								data.splice(i,1)
+							};
+						};
 
-			d3.selectAll("div.countryBox")
+						update(data,j)
+					});			
 
 			// Run it boyy
 			update(data,j)
@@ -117,15 +151,15 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 
 		//DONT DEFINE J HERE?!?!
 		// Fires when the metric is switched
-		function MetricClick(data) {
+		function MetricClick(data, t) {
 				//iterate between the options
-				if (j==0) {
-					j+=1
+				if (t === "percap") {
+					j=1;
 					q+=1; //number of times it has run?
 				}
 				
 				else{
-					j-=1
+					j=0;
 				};
 			update(data,j)
 		};
@@ -147,7 +181,7 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			// Scales and Axis updates
 			var xScale1 = d3.scale.linear()
 				// .domain([1,1000,10000])
-                 .domain([1, d3.max(statesPlus, function(d) {
+                 .domain([0, d3.max(statesPlus, function(d) {
                  	// The plus turns it into a float from a string
                  	return +d.data[type].y13; })])    
                  // .domain([1,5000])             
@@ -157,19 +191,21 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			var xAxis1 = d3.svg.axis()
 				.scale(xScale1)
 				.orient("top")
-				.ticks(10);
+				.ticks(3);
 
 			svg.selectAll("g.axis")
 				.transition() //maybe remove
-				.duration(2000) 
+				.duration(1000) 
+				// .transform(translate(10,20))
+				.attr("transform","translate(10,30)")
 				.call(xAxis1);		
 
 			// define the svg variables
 			var circles = svg.selectAll("circle.y13")
 				.data(statesPlus)
 
-			var textB = svg.selectAll("text.bubbles")
-				.data(statesPlus)
+			// var textB = svg.selectAll("text.bubbles")
+			// 	.data(statesPlus)
 
 			var textN = svg.selectAll("text.names")
 			   .data(statesPlus)	
@@ -182,15 +218,15 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			   		return xScale1(d.data[type].y13)
 			    })			 				
 
-			textB
-				.transition()
-			    .duration(2000)
-			    .text(function(d) {
-			   		return d.data[type].y13;
-			   	})
-			   	.attr("x", function(d) {
-			   		return xScale1(d.data[type].y13) + (2*BubblePadding)
-			    })			    
+			// textB
+			// 	.transition()
+			//     .duration(2000)
+			//     .text(function(d) {
+			//    		return d.data[type].y13;
+			//    	})
+			//    	.attr("x", function(d) {
+			//    		return xScale1(d.data[type].y13) + (2*BubblePadding)
+			//     })			    
 
 			textN
 				.transition()
@@ -223,22 +259,22 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			    	};			    	
 			    })
 			
-			textB
-			    .enter()
-			    .append("text")
-			    .attr("class","bubbles")			    
-				.text(function(d) {
-			   		return d.data[type].y13;
-			   	})
-			   	.attr("y",function(d, i){
-					return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding) + BubblePadding*1.5)
-				})
-			   	.attr("x", function(d) {
-			   		return xScale1(d.data[type].y13) + (2*BubblePadding)
-			    })
-			    .attr("font-family", "sans-serif")
-			    .attr("font-size", "11px")
-			    .attr("fill", "red");
+			// textB
+			//     .enter()
+			//     .append("text")
+			//     .attr("class","bubbles")			    
+			// 	.text(function(d) {
+			//    		return d.data[type].y13;
+			//    	})
+			//    	.attr("y",function(d, i){
+			// 		return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding) + BubblePadding*1.5)
+			// 	})
+			//    	.attr("x", function(d) {
+			//    		return xScale1(d.data[type].y13) + (2*BubblePadding)
+			//     })
+			//     .attr("font-family", "sans-serif")
+			//     .attr("font-size", "11px")
+			//     .attr("fill", "red");
 
 			textN
 			    .enter()
@@ -264,6 +300,22 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 				.attr("font-family", "sans-serif")
 				.attr("font-size", "11px");	
 
+			// ADD A DOTTED LINE HERE
+			svg
+				.append("line")
+				.attr("class","dotted1")
+				.attr("x1",AxisPaddingLeft - StandardPadding)
+				.attr("x2",AxisPaddingLeft - StandardPadding)
+				.attr("y1","0")
+				.attr("y2", function(){
+					var i = statesPlus.length
+					return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)
+				})
+				.attr("stroke","rgb(61,57,58)")
+				.attr("stroke-width","2px")
+				.attr("stroke-dasharray","1,4")
+				.attr("stroke-linecap","round");
+
 			// Do the second layer of transitions after the first fires
 			circles
 				.transition().duration(2000).delay(2000)
@@ -271,11 +323,11 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 			   		return (AxisPaddingTop + StandardPadding/2 + ((d.sortID)*2*r) + (d.sortID*BubblePadding)+BubblePadding/2)
 				})
 
-			textB
-				.transition().duration(2000).delay(2000)
-				.attr("y",function(d, i){
-			   		return (AxisPaddingTop + StandardPadding/2 + ((d.sortID)*2*r) + (d.sortID*BubblePadding)+BubblePadding*1.5)
-				})
+			// textB
+			// 	.transition().duration(2000).delay(2000)
+			// 	.attr("y",function(d, i){
+			//    		return (AxisPaddingTop + StandardPadding/2 + ((d.sortID)*2*r) + (d.sortID*BubblePadding)+BubblePadding*1.5)
+			// 	})
 
 			textN
 				.transition().duration(2000).delay(2000)
@@ -285,7 +337,7 @@ d3.json("/data/usaco2test.json", function(error, usdata) {
 
 		  	// Remove old elements as needed.
 			circles.exit().remove();			
-			textB.exit().remove();			
+			// textB.exit().remove();			
 			textN.exit().remove();			
 		}			
 
