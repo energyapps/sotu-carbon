@@ -195,19 +195,20 @@
 	    fill:#000;		
 	    font-size:12px;	    
 	    transition: fill 100ms ease-out;
+	    cursor: pointer;
 	}
 
-	.ctry, .econ {
+	text.ctry, text.econ, circle.ctry, circle.econ {
 		/*fill: #a9df28;*/
-		fill: #57a218 !important;
+		fill: #57a218	;
 	}
 
-	text.names.hov1 {
+	text.names.hov1, text.names:hover, circle:hover {
 		fill: #2eb0e0;
 		transition: fill 100ms ease-out;
 	}
 
-	text.names.hov2 {
+	text.names.hov2, text.names.ctry:hover, text.names.econ:hover, circle.econ:hover, circle.ctry:hover {
 		fill: #7bdf27;
 		transition: fill 100ms ease-out;
 	}
@@ -217,7 +218,7 @@
 		fill:#a21857;
 	}
 
-	#t44.hov1, #a44:hover {
+	#t44.hov1, #a44:hover, #t44:hover {
 		fill:#df277b;
 	}	
 
@@ -255,6 +256,9 @@
 	h2 sub {
 		font-size: 70% !important;
 	}
+
+
+
 
 @media only screen and (max-width: 668px) { 
 	#car_cont {display: none}

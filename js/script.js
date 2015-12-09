@@ -296,7 +296,13 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 				.duration(1000)
 				.text(function(d) {
 					return d.value;
-				})	
+				})
+				.attr("valu",function(d) {
+			   		return d.data[type].y13;
+			   	})
+			   	.attr("valux",function(d) {
+			   		return xScale1(d.data[type].y13);
+			   	})
 
 			// Now you tell it what to do when something ENTERS for the first time!
 			circles   
@@ -377,7 +383,36 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 				})
 				.attr("x", function(d) {
 					return 0
-				});
+				})
+				.attr("valu",function(d) {
+			   		return d.data[type].y13;
+			   	})
+			   	.attr("valux",function(d) {
+			   		return xScale1(d.data[type].y13);
+			   	})
+				.on("mouseover",function(d){		
+
+					var cx = this.x.animVal[0].value;
+			    	var cy = this.y.animVal[0].value;
+			    	var valu = $(this).attr('valu')	    	
+			    	var valux = $(this).attr('valux')	    	
+
+			    	svg.append("text")
+			    		.attr("class","popup")
+			  			.text(function(d) {		
+			  				return valu;
+					   	})
+					   	.attr("y",function(d){
+							return cy -3;
+						})
+					   	.attr("x", function(d) {
+					   		// return cx + 5;
+							return +valux + 5;
+					    })	
+			    })
+			    .on("mouseout",function(d){
+			    	d3.selectAll("text.popup").transition().duration(1000).style("opacity", 0).remove();
+			    })
 
 			// update A DOTTED LINE HERE
 			linez
