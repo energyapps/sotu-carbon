@@ -1,24 +1,21 @@
-	.enter {
-	  fill: green;
-	  transition: fill 750ms ease-out;
-	}
-	.axis path,
-	.axis line {
-		fill: none;
-		stroke: none;
-		shape-rendering: crispEdges;
-	}
-	
-	.axis text {
-		font-family: "Avenir LT W02 85 Heavy",verdana,sans-serif;
-		font-size: 24px;
-		fill:rgb(152,152,152);
-		padding-top: 10px;
-	}
 
-	.y13 {
-		fill: rgb(40,169,223)
-	}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke-width: 1.5px;
+  cursor: pointer;
+}
+
 
 	input#autocompletez {
         font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
@@ -190,43 +187,6 @@
 		padding-right: 30px;
 	}
 	/*TEXT AND D3 shiz*/
-	text.names, text.popup {
-		font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
-	    fill:#000;		
-	    font-size:12px;	    
-	    transition: fill 100ms ease-out;
-	    cursor: pointer;
-	}
-
-	text.ctry, text.econ, circle.ctry, circle.econ {
-		/*fill: #a9df28;*/
-		fill: #57a218	;
-	}
-
-	text.names.hov1, text.names:hover, circle:hover {
-		fill: #2eb0e0;
-		transition: fill 100ms ease-out;
-	}
-
-	text.names.hov2, text.names.ctry:hover, text.names.econ:hover, circle.econ:hover, circle.ctry:hover {
-		fill: #7bdf27;
-		transition: fill 100ms ease-out;
-	}
-
-	/*define USA color*/
-	#t44, #a44 {
-		fill:#a21857;
-	}
-
-	#t44.hov1, #a44:hover, #t44:hover {
-		fill:#df277b;
-	}	
-
-	circle:hover {
-		cursor: pointer;
-		transition: fill 100ms ease-out;
-		/*fill: pink !important;*/
-	}
 
 	#car_cont {
 		position: absolute;		    
@@ -279,13 +239,4 @@
 	#about {
 		display: none;
 	}
-
-	.axis text {
-		font-family: "Avenir LT W02 85 Heavy",verdana,sans-serif;
-		font-size: 14px;
-		fill:rgb(152,152,152);
-		padding-top: 5px;
-	}
-
-
 }

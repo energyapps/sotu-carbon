@@ -10,47 +10,128 @@ var q = 0; // Number of runs?
 var o = 0;
 var j = 1; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
 var add = 0; // index How many countries are added.
-var AxisPaddingTop = 20;
-var AxisPaddingLeft = 200;
+// var AxisPaddingTop = 20;
+// var AxisPaddingLeft = 200;
 var StandardPadding = 20;
-var BubblePadding = 3;
-var r = 5;
+// var BubblePadding = 3;
 var AddCountries = 10; //How many countries can be added		
 var totes = 51 + AddCountries
-var w = parseInt(d3.select("#master_container").style("width"))
-var h = (AxisPaddingTop + StandardPadding/2 + ((totes)*2*r) + (totes*BubblePadding)+BubblePadding*1.5+20)
-
 var statesPlus;
 var countries;
 
+var w = parseInt(d3.select("#master_container").style("width"))
+// var h = (AxisPaddingTop + StandardPadding/2 + ((totes)*2*r) + (totes*BubblePadding)+BubblePadding*1.5+20)
+
+var margin = {top: 20, right: 80, bottom: 30, left: 50},
+    width = w - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var svg = d3.select("#master_container").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 //Create SVG element
-var svg = d3.select("#master_container")
-			.append("svg")
-			.attr("width", w)
-			.attr("height", h);  	
+// var svg = d3.select("#master_container").append("svg")
+// 			.attr("width", w)
+// 			.attr("height", h);  	
 
-svg.append("g")
-    .attr("class", "axis")  //Assign "axis" class
-    .attr("transform", "translate(0," + (AxisPaddingTop + 10) + ")")
+var parseDate = d3.time.format("%Y").parse;
 
-var linez = svg
-	.append("line")
-	.attr("class","dotted1")
-	.attr("x1",AxisPaddingLeft - StandardPadding)
-	.attr("x2",AxisPaddingLeft - StandardPadding)
-	.attr("y1","0")
-	.attr("stroke","rgb(61,57,58)")
-	.attr("stroke-width","2px")
-	.attr("stroke-dasharray","1,4")
-	.attr("stroke-linecap","round");
+var x = d3.time.scale()
+    .range([0, width]);
 
-function randomIntFromInterval(min,max)
-{
-    return Math.floor(Math.random()*(max-min+1)+min);
-}
+var y = d3.scale.linear()
+    .range([height, 0]);
 
-// d3.json("/data/usaco2test.json", function(error, usdata) {
-// 	d3.json("/data/worldco2test.json", function(error, worlddata) {
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var line = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.temperature); });
+
+d3.tsv("../data/CO22.tsv", function(error, data) {
+  if (error) throw error;
+
+  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+
+  data.forEach(function(d) {
+    d.date = parseDate(d.date);
+  });
+
+  var cities = color.domain().map(function(name) {
+    return {
+      name: name,
+      values: data.map(function(d) {
+        return {date: d.date, temperature: +d[name]};
+      })
+    };
+  });
+
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+
+  y.domain([
+    d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.temperature; }); }),
+    d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.temperature; }); })
+  ]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("CO2 per capita change");
+
+  var city = svg.selectAll(".city")
+      .data(cities)
+    .enter().append("g")
+      .attr("class", "city");
+
+  city.append("path")
+      .attr("class", "line")
+      .attr("d", function(d) { return line(d.values); })
+      .style("stroke", function(d,i) { 
+        var color = "hsl(" + (i+260) + ",100%,50%)"
+        return color;        
+      })
+      .style("stroke-opacity","0.4")
+      .on("mouseover",function(d){   
+        d3.selectAll(".line").style("stroke-opacity","0.2")
+        d3.select(this).style("stroke-opacity","0.8")
+      })
+      .on("mouseout",function(d){
+        d3.select(this).style("stroke-opacity","0.2")
+      });
+      ;
+
+  // city.append("text")
+  //     .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+  //     .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
+  //     .attr("x", 3)
+  //     .attr("dy", ".35em")
+  //     .text(function(d) { return d.name; });
+
+});
+
+
 d3.json("data/usaco2test.json", function(error, usdata) {
 	d3.json("data/worldco2test.json", function(error, worlddata) {			
 
@@ -142,15 +223,10 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			CountryClick(data,117) // China
 			CountryClick(data,153) // UAE
 			CountryClick(data,124) // Small Country... Morrocco?
-
-			// update(data,j)
 		};
 
-		// Fires when a new country is added or subtracted
-		function CountryClick(data,x) {	
-				// How to prevent doubles?
-				// prevent XXXX's
-				// Prevent USA			
+		// Fires when a new country(STATE) is added or subtracted
+		function CountryClick(data,x) {			
 			if (add === AddCountries) {
 				add = 0;
 				//Remove 53, 54, 55
@@ -190,7 +266,6 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 			pymChild.sendHeight();
 		};
 
-		//DONT DEFINE J HERE?!?!
 		// Fires when the metric is switched
 		function MetricClick(data, t) {
 				//iterate between the options
@@ -210,279 +285,26 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 		function update(x,j) {				
 			var w = parseInt(d3.select("#master_container").style("width"))
 
-			// interpret j
+			// interpret j: The thing that changes from one co2 per cap to intesnity, etc.
 			if (j  === 0) {
-				var type = "gross"
+				// var type = "gross"
 			} else if (j === 1) {
-				var type = "percap"		
+				// var type = "percap"		
 			};
-
-			// update the sortID fields
-			sortFunction(x,type)
 
 			// reassign a reference of the data
 			var	statesPlus = x;
 
-			// Scales and Axis updates
+			// svg.attr("height",function(){
+			// 		var i = statesPlus.length
+			// 		return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)
+			// 	});
 
-			if (j===1) {
-				var xScale1 = d3.scale.linear()				
-	                .domain([0, d3.max(statesPlus, function(d) {                 	
-	                	return +d.data[type].y13; })])                     
-					// .range([AxisPaddingLeft, w - (StandardPadding*5) ,w-(StandardPadding*2)]);\
-					.range([AxisPaddingLeft,w-(StandardPadding*2)]);
-
-				var xAxis1 = d3.svg.axis()
-					.scale(xScale1)
-					.orient("top")
-					.ticks(3)
-			} else {
-				var xScale1 = d3.scale.log()
-					.domain([1, d3.max(statesPlus, function(d) {                 	
-	                	return +d.data[type].y13; })]) 
-	                .range([AxisPaddingLeft,w-(StandardPadding*2)]);	
-
-	            var xAxis1 = d3.svg.axis()
-						.scale(xScale1)
-						.orient("top")
-
-	            if (w <= 500) {
-	            	console.log('g')
-					xAxis1
-						.ticks(2, ",.1s")	            	
-	            } else {
-					xAxis1
-						.ticks(4, ",.1s")
-	            };
-
-			}
-
-			svg.selectAll("g.axis")
-				.transition() //maybe remove
-				.duration(1000) 
-				// .transform(translate(10,20))
-				.attr("transform","translate(0,30)")
-				.call(xAxis1)
-			
-			// define the svg variables
-			var circles = svg.selectAll("circle.y13")
-				.data(statesPlus)
-
-			var textN = svg.selectAll("text.names")
-			   .data(statesPlus)	
-
-			// Do the updated things first! This is what happens to an update
-			circles
-				.transition()
-			   	.duration(1000)
-			   	.attr("cx", function(d) {
-			   		return xScale1(d.data[type].y13)
-			    })
-			    .attr("valu",function(d) {
-			   		return d.data[type].y13;
-			   	})
-			   	.attr("class", function(d) {			    	
-			    	if (d.type === "CTRY" || d.type === "ECON") {			    		
-			    		return "ctry y13 " + type	
-			    	} 
-			    	else {			    
-			    		// console.log(type)		
-			    		return "y13 " + type
-			    	};		
-			    });
-
-			textN
-				.transition()
-				.duration(1000)
-				.text(function(d) {
-					return d.value;
-				})
-				.attr("valu",function(d) {
-			   		return d.data[type].y13;
-			   	})
-			   	.attr("valux",function(d) {
-			   		return xScale1(d.data[type].y13);
-			   	})
-
-			// Now you tell it what to do when something ENTERS for the first time!
-			circles   
-			    .enter()
-			    .append("circle")
-			    .attr("id",function(d){
-			   		return "a"+d.indexy;
-			   	})
-			   	.attr("valu",function(d) {
-			   		return d.data[type].y13;
-			   	})
-			    .attr("r", r)
-			    .attr("cx", function(d) {
-			   		return xScale1(d.data[type].y13)
-			    })
-			    .attr("cy",function(d,i){			    	
-			   		return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding))
-				})
-				.attr("class", function(d) {			    	
-			    	if (d.type === "CTRY" || d.type === "ECON") {    		
-			    		return "ctry y13 " + type	
-			    	} 
-			    	else {			    		
-			    		return "y13 " + type
-			    	};			    	
-			    })
-			    .on("mouseover",function(d){		
-					var cx = this.cx.animVal.value;
-			    	var cy = this.cy.animVal.value;
-			    	var valu = $(this).attr('valu')	    	
-
-			    	svg.append("text")
-			    		.attr("class","popup")
-			  			.text(function(d) {		
-			  				return valu;
-					   	})
-					   	.attr("y",function(d, i){
-							return cy;
-						})
-					   	.attr("x", function(d) {
-					   		return cx + 5;
-					    })	
-
-					svg.select("text#t" + d.nodeID)
-						.attr("class",function(d){							
-							if (d.nodeID <= 51) {
-								return "names hov1"	
-							} else {return "names hov2"};				
-						})		
-					
-			    })
-			    .on("mouseout",function(d){
-			    	d3.selectAll("text.popup").transition().duration(1000).style("opacity", 0).remove();
-			    	d3.selectAll("text.hov1").transition().duration(1000).attr("class","names")
-			    	d3.selectAll("text.hov2").transition().duration(1000).attr("class","names econ")
-			    })
-
-			textN
-			    .enter()
-			    .append("text")
-			    .attr("class", function(d) {			    	
-			    	if (d.type === "CTRY") {
-			    		return "names ctry"	
-			    	} else if (d.type === "ECON") {
-			    		return "names econ"
-			    	} else {
-			    		return "names"
-			    	};			    	
-			    })
-			    .attr("id",function(d){
-			   		return "t"+d.nodeID;
-			   	})	    	
-			    .text(function(d) {
-					return d.value;
-				})			
-			    .attr("y",function(d, i){
-					return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)
-				})
-				.attr("x", function(d) {
-					return 0
-				})
-				.attr("valu",function(d) {
-			   		return d.data[type].y13;
-			   	})
-			   	.attr("valux",function(d) {
-			   		return xScale1(d.data[type].y13);
-			   	})
-				.on("mouseover",function(d){		
-
-					var cx = this.x.animVal[0].value;
-			    	var cy = this.y.animVal[0].value;
-			    	var valu = $(this).attr('valu')	    	
-			    	var valux = $(this).attr('valux')	    	
-
-			    	svg.append("text")
-			    		.attr("class","popup")
-			  			.text(function(d) {		
-			  				return valu;
-					   	})
-					   	.attr("y",function(d){
-							return cy -3;
-						})
-					   	.attr("x", function(d) {
-					   		// return cx + 5;
-							return +valux + 5;
-					    })	
-			    })
-			    .on("mouseout",function(d){
-			    	d3.selectAll("text.popup").transition().duration(1000).style("opacity", 0).remove();
-			    })
-
-			// update A DOTTED LINE HERE
-			linez
-				.attr("y2", function(){
-					var i = statesPlus.length
-					return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)
-				});
-			// update height of graphic
-			svg.attr("height",function(){
-					var i = statesPlus.length
-					return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)
-				});
-				
-
-			// Do the second layer of transitions after the first fires
-			circles
-				.transition().duration(1000).delay(1000)
-			    .attr("cy",function(d,i){			  
-			   		return (AxisPaddingTop + StandardPadding/2 + ((d.sortID)*2*r) + (d.sortID*BubblePadding)+BubblePadding/2)
-				})
-
-			textN
-				.transition().duration(1000).delay(1000)
-				.attr("y",function(d, i){
-			   		return (AxisPaddingTop + StandardPadding/2 + ((d.sortID)*2*r) + (d.sortID*BubblePadding)+BubblePadding*1.5)
-				})
-
-		  	// Remove old elements as needed.
-			circles.exit().remove();			
-			textN.exit().remove();	
 			pymChild.sendHeight();
 		}			
 
-		function sortFunction (statesPlus,type) {		
-			//define the rename
-			var copy = JSON.parse(JSON.stringify(statesPlus)); //maybe don't need for json?
-			//index the rename
-			for (var i = 0; i < copy.length; i++) {
-				copy[i].nodeID = i;
-				copy[i].sortID = 0;
-				statesPlus[i].nodeID = i; //will this update itself?
-				statesPlus[i].sortID = 0;
-			};			
-
-			function sortList (data, type) {			
-				data = data.sort(function(a,b){
-					a = +a.data[type].y13
-					b = +b.data[type].y13
-					if (a < b) {
-					    return -1;
-					} else if (a > b) { 
-					    return 1;
-					}
-				});
-				// create sorted index ... sortID
-				for (var i = 0; i < data.length; i++) {		
-					data[i].sortID = i;
-				};
-				return data;
-			}
-
-			var newList = sortList(copy,type)			
-
-			for (var i = 0; i < statesPlus.length; i++) {
-				for (var k = 0; k < newList.length; k++) {
-					if (statesPlus[i].nodeID === newList[k].nodeID) {
-						statesPlus[i].sortID = newList[k].sortID
-					};			
-				};
-			};
-		
-			return statesPlus
-		}
+// Prebaked functions
+function randomIntFromInterval(min,max)
+{
+    return Math.floor(Math.random()*(max-min+1)+min);
+}		
