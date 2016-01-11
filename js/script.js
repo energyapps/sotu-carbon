@@ -58,12 +58,12 @@ var yAxis = d3.svg.axis()
 var line = d3.svg.line()
     .interpolate("basis")
     .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.temperature); });
+    .y(function(d) { return y(d.co2); });
 
-d3.tsv("../data/CO22.tsv", function(error, data) {
+d3.tsv("../data/CO23.tsv", function(error, data) {
   if (error) throw error;
 
-  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date" && key.slice(-2) !== "01" && key.slice(-2) !== "02"  ; }));
 
   data.forEach(function(d) {
     d.date = parseDate(d.date);
@@ -73,7 +73,23 @@ d3.tsv("../data/CO22.tsv", function(error, data) {
     return {
       name: name,
       values: data.map(function(d) {
-        return {date: d.date, temperature: +d[name]};
+      	var f = +d[name];
+      	
+      	// Loops and adds in other intensities!
+      	for (var k in d){
+      		if (k.slice(0,-2) == name && k.slice(-2) == 01 ) {
+      			var g = +d[k]
+      		} else if (k.slice(0,-2) == name && k.slice(-2) == 02 ) {
+      			var h = +d[k]
+      		}
+      	}
+
+        return {
+        	date: d.date,
+         	co2: f,
+         	cintensity: g,
+         	eintensity: h
+         };
       })
     };
   });
@@ -81,8 +97,8 @@ d3.tsv("../data/CO22.tsv", function(error, data) {
   x.domain(d3.extent(data, function(d) { return d.date; }));
 
   y.domain([
-    d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.temperature; }); }),
-    d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.temperature; }); })
+    d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.co2; }); }),
+    d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.co2; }); })
   ]);
 
   svg.append("g")
@@ -109,11 +125,12 @@ d3.tsv("../data/CO22.tsv", function(error, data) {
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
       .style("stroke", function(d,i) { 
-        var color = "hsl(" + (i+260) + ",100%,50%)"
+      	var c = 350 - (d.values[13].co2 * -3)
+        var color = "hsl(" + c + ",100%,50%)"
         return color;        
       })
       .style("stroke-opacity","0.4")
-      .on("mouseover",function(d){   
+      .on("mouseover",function(d){  
         d3.selectAll(".line").style("stroke-opacity","0.2")
         d3.select(this).style("stroke-opacity","0.8")
       })
@@ -124,7 +141,7 @@ d3.tsv("../data/CO22.tsv", function(error, data) {
 
   // city.append("text")
   //     .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-  //     .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
+  //     .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.co2) + ")"; })
   //     .attr("x", 3)
   //     .attr("dy", ".35em")
   //     .text(function(d) { return d.name; });
