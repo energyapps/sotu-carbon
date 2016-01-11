@@ -5,6 +5,8 @@ var pymChild = new pym.Child();
 var statesPlusGlobal = [];
 var countriesGlobal = [];
 
+var statesGlobal = [];
+
 //indexes, Width and height, Padding, parameters
 var q = 0; // Number of runs?
 var o = 0;
@@ -66,10 +68,13 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
   color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date" && key.slice(-2) !== "01" && key.slice(-2) !== "02"  ; }));
 
   data.forEach(function(d) {
+
     d.date = parseDate(d.date);
   });
 
   var cities = color.domain().map(function(name) {
+  	statesGlobal.push(name)
+
     return {
       name: name,
       values: data.map(function(d) {
@@ -124,18 +129,20 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
   city.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
+      .attr("attribute",function(d){return d.name})
       .style("stroke", function(d,i) { 
       	var c = 350 - (d.values[13].co2 * -3)
         var color = "hsl(" + c + ",100%,50%)"
         return color;        
       })
       .style("stroke-opacity","0.4")
-      .on("mouseover",function(d){  
-        d3.selectAll(".line").style("stroke-opacity","0.2")
+      .on("mouseover",function(d){        	
+        console.log(d.name)
+        d3.selectAll(".line").style("stroke-opacity","0.1")
         d3.select(this).style("stroke-opacity","0.8")
       })
       .on("mouseout",function(d){
-        d3.select(this).style("stroke-opacity","0.2")
+        d3.select(this).style("stroke-opacity","0.1")
       });
       ;
 
@@ -146,142 +153,68 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
   //     .attr("dy", ".35em")
   //     .text(function(d) { return d.name; });
 
-});
 
+	d3.selectAll(".tab").on("click", function() {
+		d3.selectAll(".tab").attr("class","tab");
+		this.className = "tab active";
+		d3.select("#about_extend").attr("class","");
+		d3.select("#about").attr("class","about_tab")
 
-d3.json("data/usaco2test.json", function(error, usdata) {
-	d3.json("data/worldco2test.json", function(error, worlddata) {			
+		// set the metric title
+		var emissions = d3.select('#emissions')[0][0];
+		if (j === 1) {
+			emissions.innerHTML = "Annual Carbon Dioxide Emissions 2013 (Million Metric Tons of CO<sub>2</sub> per geography, logarithmic)";
+		} else {
+			emissions.innerHTML = "Annual Carbon Dioxide Emissions 2013 (Metric Tons of CO<sub>2</sub> per Person) ";	
+		};			
 
-		var stData = usdata.states;
-
-		for (i in stData) {
-			statesPlusGlobal.push(stData[i])
-		};
-
-		var LookCountry = worlddata.countries;
-
-		for (i in LookCountry) {
-			
-			if (LookCountry[i].id === "WWWW" || LookCountry[i].id === "EU28" || LookCountry[i].id === "GG20" || LookCountry[i].id === "GG08" ) {
-				countriesGlobal.push(LookCountry[i])	
-			}
-			else if(LookCountry[i].type === "EXCL" || LookCountry[i].type === "ECON" || LookCountry[i].id === "USA") {
-			} else {
-				countriesGlobal.push(LookCountry[i])	
-			};
-		}					
-
-		statesPlus = statesPlusGlobal;
-
-		countries = worlddata.countries;
-
-		initial(statesPlus)
-
-		d3.selectAll(".tab").on("click", function() {
-			d3.selectAll(".tab").attr("class","tab");
-			this.className = "tab active";
-			d3.select("#about_extend").attr("class","");
-			d3.select("#about").attr("class","about_tab")
-
-			// set the metric title
-			var emissions = d3.select('#emissions')[0][0];
-			if (j === 1) {
-				emissions.innerHTML = "Annual Carbon Dioxide Emissions 2013 (Million Metric Tons of CO<sub>2</sub> per geography, logarithmic)";
-			} else {
-				emissions.innerHTML = "Annual Carbon Dioxide Emissions 2013 (Metric Tons of CO<sub>2</sub> per Person) ";	
-			};
-			
-
-			MetricClick(statesPlus, this.id)
-		});
-	
-		d3.select("#about").on("click", function() {
-			// d3.selectAll(".tab").attr("class","tab")
-			this.className = "about_tab active"			
-			// d3.select("#about_extend").attr("class","active");
-			$("#about_extend").addClass("active");
-			$("#about_extend").css("display","block");
-		});
-
-		//remove about on click out
-		$(document).on('click', function(event) {
-		  if (!$(event.target).closest('#about').length) {
-		    // d3.select("#about_extend").attr("class","");
-			d3.select("#about").attr("class","about_tab")
-			$("#about_extend").css("display","none");
-		  }
-		});
-
-		
-
-		$('#autocompletez').autocomplete({
-		    lookup: countriesGlobal,
-		    lookupLimit: 10,
-		    maxHeight:350,
-		    showNoSuggestionNotice: true,
-		    noSuggestionNotice: function(){		    	
-		    	return "Can't find your country? Click About the Data below to learn more."	
-		    },
-		    onSelect: function (suggestion) {
-		    	
-		    	var indexy = suggestion.indexy;
-
-		 		CountryClick(statesPlusGlobal,indexy)
-		    }
-		});		
-	pymChild.sendHeight();
+		MetricClick(statesPlus, this.id)
 	});
+
+	d3.select("#about").on("click", function() {
+		// d3.selectAll(".tab").attr("class","tab")
+		this.className = "about_tab active"			
+		// d3.select("#about_extend").attr("class","active");
+		$("#about_extend").addClass("active");
+		$("#about_extend").css("display","block");
+	});
+
+	//remove about on click out
+	$(document).on('click', function(event) {
+	  if (!$(event.target).closest('#about').length) {
+	    // d3.select("#about_extend").attr("class","");
+		d3.select("#about").attr("class","about_tab")
+		$("#about_extend").css("display","none");
+	  }
+	});
+
+	$('#autocompletez').autocomplete({
+	    lookup: statesGlobal,
+	    lookupLimit: 10,
+	    maxHeight:350,
+	    showNoSuggestionNotice: true,
+	    noSuggestionNotice: function(){		    	
+	    	return "No state found"
+	    },
+	    onSelect: function (suggestion) {
+	    	console.log(suggestion)	
+
+	   		// CAll function that highlights selected line
+	 		Highlight(suggestion)
+	    }
+	});		
+	pymChild.sendHeight();
 });
+	
 
-		// Fires on Initial Load.
-		function initial(data) {
-			CountryClick(data,160) //add World
-			CountryClick(data,156) // EU
-			CountryClick(data,117) // China
-			CountryClick(data,153) // UAE
-			CountryClick(data,124) // Small Country... Morrocco?
-		};
+		function Highlight(sug) {
+			// Call d3 THIS highlight, everything else lowlight
 
-		// Fires when a new country(STATE) is added or subtracted
-		function CountryClick(data,x) {			
-			if (add === AddCountries) {
-				add = 0;
-				//Remove 53, 54, 55
-				data.splice(52	,(AddCountries - 1))	
-				d3.selectAll(".countryBox").remove();			
-			};
+			d3.selectAll(".line").style("stroke-opacity","0.1")
+			d3.select('[attribute="'+ sug.value +'"]').style("stroke-opacity","0.8")        	
 
-			// first go from 0 to 1, then 1 to 2, 3 to 4, 4 to 0 (above ), 0 to 1;
-			add +=1;
-			var indexIs = 51+add;
-		
-			// or could switch to length
-			data[indexIs] = countries[x];			
-			d3.select("#countryBoxes")
-				.append("div")
-				.text(countries[x].value)
-				.attr('class','countryBox')
-					.append("div")
-					.attr('class',"xBox")
-					.attr('id',countries[x].id)
-					.text("x")
-					.on("click",function(d){
-						d3.select(this.parentNode).remove();						
-						add -=1;
-						
-						for (var i = 51; i < data.length; i++) {
-							if (data[i].id === this.id) {
-								data.splice(i,1)
-							};
-						};
-
-						update(data,j)
-					});			
-
-			// Run it boyy
-			update(data,j)
 			pymChild.sendHeight();
-		};
+		}	
 
 		// Fires when the metric is switched
 		function MetricClick(data, t) {
@@ -289,12 +222,10 @@ d3.json("data/usaco2test.json", function(error, usdata) {
 				if (t === "percap") {
 					j=1;
 					q+=1; //number of times it has run?
-				}
-				
+				}				
 				else{
 					j=0;
 				};
-
 			update(data,j)
 			pymChild.sendHeight();
 		};
