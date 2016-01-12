@@ -39,7 +39,7 @@ var yAxis = d3.svg.axis()
     .orient("left")
     .outerTickSize(0);   
 
-d3.tsv("/data/CO23.tsv", function(error, data) {
+d3.tsv("data/CO23.tsv", function(error, data) {
   if (error) throw error;
 
   color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date" && key.slice(-2) !== "01" && key.slice(-2) !== "02"  ; }));
