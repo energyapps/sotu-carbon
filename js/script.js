@@ -1,30 +1,16 @@
 // Initiate pym
 var pymChild = new pym.Child();
 
-// define globals first
-var statesPlusGlobal = [];
-var countriesGlobal = [];
-
 var statesGlobal = [];
 
 //indexes, Width and height, Padding, parameters
-var q = 0; // Number of runs?
-var o = 0;
-var j = 1; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
-var add = 0; // index How many countries are added.
-// var AxisPaddingTop = 20;
-// var AxisPaddingLeft = 200;
+var j = 0; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
 var StandardPadding = 20;
-// var BubblePadding = 3;
-var AddCountries = 10; //How many countries can be added		
-var totes = 51 + AddCountries
-var statesPlus;
-var countries;
 
 var w = parseInt(d3.select("#master_container").style("width"))
 // var h = (AxisPaddingTop + StandardPadding/2 + ((totes)*2*r) + (totes*BubblePadding)+BubblePadding*1.5+20)
 
-var margin = {top: 20, right: 80, bottom: 30, left: 50},
+var margin = {top: 20, right: 20, bottom: 30, left: 30},
     width = w - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -33,11 +19,6 @@ var svg = d3.select("#master_container").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-//Create SVG element
-// var svg = d3.select("#master_container").append("svg")
-// 			.attr("width", w)
-// 			.attr("height", h);  	
 
 var parseDate = d3.time.format("%Y").parse;
 
@@ -51,30 +32,24 @@ var color = d3.scale.category10();
 
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom");
+    .orient("bottom");    
 
 var yAxis = d3.svg.axis()
     .scale(y)
-    .orient("left");
+    .orient("left")
+    .outerTickSize(0);   
 
-var line = d3.svg.line()
-    .interpolate("basis")
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.co2); });
-
-d3.tsv("../data/CO23.tsv", function(error, data) {
+d3.tsv("/data/CO23.tsv", function(error, data) {
   if (error) throw error;
 
   color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date" && key.slice(-2) !== "01" && key.slice(-2) !== "02"  ; }));
 
   data.forEach(function(d) {
-
     d.date = parseDate(d.date);
   });
 
   var cities = color.domain().map(function(name) {
   	statesGlobal.push(name)
-
     return {
       name: name,
       values: data.map(function(d) {
@@ -88,7 +63,6 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
       			var h = +d[k]
       		}
       	}
-
         return {
         	date: d.date,
          	co2: f,
@@ -101,15 +75,15 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
 
   x.domain(d3.extent(data, function(d) { return d.date; }));
 
-  y.domain([
-    d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.co2; }); }),
-    d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.co2; }); })
-  ]);
-
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      .call(xAxis)
+
+// put this in the update
+  y.domain([
+    -55,30
+  ]);
 
   svg.append("g")
       .attr("class", "y axis")
@@ -121,6 +95,16 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
       .style("text-anchor", "end")
       .text("CO2 per capita change");
 
+    svg
+    	.append("line")
+    		.attr("class","baseline")
+			.attr("y1", y(0))
+		  	.attr("y2", y(0))
+		  	.attr("x1",0)
+		  	.attr("x2",width)
+		  	.attr("stroke-width","1")
+		  	.attr("stroke","#000");
+
   var city = svg.selectAll(".city")
       .data(cities)
     .enter().append("g")
@@ -128,7 +112,14 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
 
   city.append("path")
       .attr("class", "line")
-      .attr("d", function(d) { return line(d.values); })
+      .attr("d", function(d) { 			   		
+		var line = d3.svg.line()
+		    .interpolate("basis")
+		    .x(function(d) { return x(d.date); })
+		    .y(function(d) { return y(d["co2"]); })
+
+		return line(d.values)
+	  })
       .attr("attribute",function(d){return d.name})
       .style("stroke", function(d,i) { 
       	var c = 350 - (d.values[13].co2 * -3)
@@ -137,7 +128,6 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
       })
       .style("stroke-opacity","0.4")
       .on("mouseover",function(d){        	
-        console.log(d.name)
         d3.selectAll(".line").style("stroke-opacity","0.1")
         d3.select(this).style("stroke-opacity","0.8")
       })
@@ -158,23 +148,13 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
 		d3.selectAll(".tab").attr("class","tab");
 		this.className = "tab active";
 		d3.select("#about_extend").attr("class","");
-		d3.select("#about").attr("class","about_tab")
+		d3.select("#about").attr("class","about_tab")		
 
-		// set the metric title
-		var emissions = d3.select('#emissions')[0][0];
-		if (j === 1) {
-			emissions.innerHTML = "Annual Carbon Dioxide Emissions 2013 (Million Metric Tons of CO<sub>2</sub> per geography, logarithmic)";
-		} else {
-			emissions.innerHTML = "Annual Carbon Dioxide Emissions 2013 (Metric Tons of CO<sub>2</sub> per Person) ";	
-		};			
-
-		MetricClick(statesPlus, this.id)
+		update(this.id)
 	});
 
 	d3.select("#about").on("click", function() {
-		// d3.selectAll(".tab").attr("class","tab")
 		this.className = "about_tab active"			
-		// d3.select("#about_extend").attr("class","active");
 		$("#about_extend").addClass("active");
 		$("#about_extend").css("display","block");
 	});
@@ -196,9 +176,7 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
 	    noSuggestionNotice: function(){		    	
 	    	return "No state found"
 	    },
-	    onSelect: function (suggestion) {
-	    	console.log(suggestion)	
-
+	    onSelect: function (suggestion) {	    	
 	   		// CAll function that highlights selected line
 	 		Highlight(suggestion)
 	    }
@@ -209,44 +187,31 @@ d3.tsv("../data/CO23.tsv", function(error, data) {
 
 		function Highlight(sug) {
 			// Call d3 THIS highlight, everything else lowlight
-
 			d3.selectAll(".line").style("stroke-opacity","0.1")
 			d3.select('[attribute="'+ sug.value +'"]').style("stroke-opacity","0.8")        	
 
 			pymChild.sendHeight();
 		}	
 
-		// Fires when the metric is switched
-		function MetricClick(data, t) {
-				//iterate between the options
-				if (t === "percap") {
-					j=1;
-					q+=1; //number of times it has run?
-				}				
-				else{
-					j=0;
-				};
-			update(data,j)
-			pymChild.sendHeight();
-		};
-
-		function update(x,j) {				
+		function update(tabID) {				
 			var w = parseInt(d3.select("#master_container").style("width"))
 
-			// interpret j: The thing that changes from one co2 per cap to intesnity, etc.
-			if (j  === 0) {
-				// var type = "gross"
-			} else if (j === 1) {
-				// var type = "percap"		
-			};
+			var city = svg.selectAll(".city").selectAll("path")
 
-			// reassign a reference of the data
-			var	statesPlus = x;
-
-			// svg.attr("height",function(){
-			// 		var i = statesPlus.length
-			// 		return (AxisPaddingTop + StandardPadding/2 + ((i)*2*r) + (i*BubblePadding)+BubblePadding*1.5)
-			// 	});
+			city.transition()
+			   	.duration(1000)
+				.attr("d", function(d) { 			 		
+					var line = d3.svg.line()
+					    .interpolate("basis")
+					    .x(function(d) { return x(d.date); })
+					    .y(function(d) { return y(d[tabID]); })
+					return line(d.values)
+				})
+			    .style("stroke", function(d,i) { 
+			      	var c = 350 - (d.values[13][tabID] * -3)
+			        var color = "hsl(" + c + ",100%,50%)"
+			        return color;        
+			      })			
 
 			pymChild.sendHeight();
 		}			
