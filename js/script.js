@@ -10,7 +10,7 @@ var StandardPadding = 20;
 var w = parseInt(d3.select("#master_container").style("width"))
 // var h = (AxisPaddingTop + StandardPadding/2 + ((totes)*2*r) + (totes*BubblePadding)+BubblePadding*1.5+20)
 
-var margin = {top: 20, right: 20, bottom: 30, left: 30},
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = w - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
