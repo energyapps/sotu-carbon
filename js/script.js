@@ -79,7 +79,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 
 // put this in the update
   y.domain([
-    -550,100
+    -550,300
   ]);
 
   svg.append("g")
@@ -92,17 +92,6 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       .attr("dy", ".71em")
       .style("text-anchor", "start")
       .text("CO2 Emissions Change (Million Tonnes)");
-
-    svg
-    	.append("line")
-    		.attr("class","baseline")
-			.attr("y1", y(0))
-		  	.attr("y2", y(0))
-		  	.attr("x1",0)
-		  	.attr("x2",width)
-		  	.attr("stroke-width","1.5")
-		  	.attr("stroke","#000")
-		  	.attr("stroke-opacity","0.5");
 
   var city = svg.selectAll(".city")
       .data(cities)
@@ -125,10 +114,10 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       .attr("attribute",function(d){return d.name})
       .attr("tabID","co2")
       .style("stroke", function(d,i) {       	
-        var color = "#333"
+        var color = "#111"
         return color;        
       })
-      .style("stroke-opacity","0.15")
+      .style("stroke-opacity","0.10")
       .on("mouseover",function(d){        	
       	Highlight(d.name)       
       })
@@ -138,7 +127,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 
     d3.select('[attribute="United States"]')
     	.style("stroke-width","5")
-    	.style("stroke-opacity","1")
+    	.style("stroke-opacity","0.6")
       .style("stroke","rgb(139,204,0)")
 
     svg.append("text")
@@ -158,13 +147,11 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       .attr("y","35")
       .text("CO2 Emissions Change (Million Tonnes)")
 
-  // svg.append("text")
-  //     .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-  //     .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.co2) + ")"; })
-  //     .attr("x", 3)
-  //     .attr("dy", ".35em")
-  //     .text(function(d) { return d.name; });
-
+    svg.append("text")
+      .attr("class","USText")
+      .attr("x",320)
+      .attr("y",height-150)
+      .text("United States ⤴")      
 
 	d3.selectAll(".tab").on("click", function() {
 		d3.selectAll(".tab").attr("class","tab");
@@ -209,9 +196,9 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 		function Highlight(sug) {
 
 			// Call d3 THIS highlight, everything else lowlight			
-      d3.selectAll(".line").style("stroke-opacity","0.15")        
-			d3.select('[attribute="'+ sug +'"]').style("stroke-opacity","0.8")        	
-			d3.select('[attribute="United States"]').style("stroke-opacity","0.8")
+      d3.selectAll(".line").style("stroke-opacity","0.10")        
+			d3.select('[attribute="United States"]').style("stroke-opacity","0.6")
+      d3.select('[attribute="'+ sug +'"]').style("stroke-opacity","0.8")        				
 			d3.select(".highlightText")
 				.text(function(d){					
 					var data = d3.select('[attribute="'+ sug +'"]')[0][0].__data__;
@@ -229,16 +216,17 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 
       d3.selectAll('.y.axis').remove();
       d3.select(".baseline").remove();
+      d3.select(".USText").remove();
 
       if (tabID == "co2") {
         y.domain([
-          -550,100
+          -550,300
         ]);
         var ctext = "CO2 Emissions Change (Million Tonnes)";
 
       } else {
         y.domain([
-          -10,5
+          -10,6
         ]);
         var ctext = "CO2 Emissions Change (Tonnes/Person)";
       };
@@ -253,17 +241,6 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       .attr("dy", ".71em")
       .style("text-anchor", "start")
       .text(ctext);
-
-    svg
-      .append("line")
-        .attr("class","baseline")
-      .attr("y1", y(0))
-        .attr("y2", y(0))
-        .attr("x1",0)
-        .attr("x2",width)
-        .attr("stroke-width","1.5")
-        .attr("stroke","#000")
-        .attr("stroke-opacity","0.5");
 
 			var city = svg.selectAll(".city").selectAll("path")
 
