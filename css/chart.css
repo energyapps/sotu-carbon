@@ -12,10 +12,22 @@
 
 .line {
   fill: none;
-  stroke-width: 1.5px;
+  stroke-width:1.5px;
+  /*stroke-linecap:round;*/
   cursor: pointer;
 }
 
+#title_intro {
+	padding-bottom: 5px;
+}
+
+.highlightText {
+	font-size: 40px;
+	text-anchor: end;
+	alignment-baseline: hanging;
+	fill: #333;
+	font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
+}
 
 	input#autocompletez {
         font-family: "Avenir LT W02 35 Light",verdana,sans-serif;
