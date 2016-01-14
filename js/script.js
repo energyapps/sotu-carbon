@@ -29,7 +29,11 @@ var x = d3.time.scale()
 var y = d3.scale.linear()
     .range([height, 0]);
 
+var y2 = d3.scale.linear()
+    .range([height, 0]);    
+
 var color = d3.scale.category10();
+var color2 = d3.scale.category10();
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -40,15 +44,23 @@ var yAxis = d3.svg.axis()
     .orient("left")
     .outerTickSize(0);   
 
+var yAxis2 = d3.svg.axis()
+    .scale(y2)    
+    .orient("right")
+    .outerTickSize(0);       
+
 d3.tsv("data/combined_hor.tsv", function(error, data) {
   if (error) throw error;
-  d3.csv("data/barrels.csv", function(error, barrels) {
+  d3.tsv("data/barrels.tsv", function(error, barrels) {
     if (error) throw error;
 
     console.log(data)
     console.log(barrels)
 
     color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date" && key.slice(-2) !== "01"; }));
+  
+    color2.domain(d3.keys(barrels[0]).filter(function(key) { return key !== "date"}));
+
 
     data.forEach(function(d) {
       d.date = parseDate(d.date);
@@ -59,6 +71,21 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
     })
 
     // Put it on the thing~!~~!!!
+
+    var oil = color2.domain().map(function(name) {
+      // statesGlobal.push(name)
+      return {
+        name: name,
+        values: data.map(function(d) {
+
+          var f = +d[name];          
+          return {
+            date: d.date,
+            barrels: f
+          };
+        })
+      };
+    });
 
     var cities = color.domain().map(function(name) {
     	statesGlobal.push(name)
@@ -94,6 +121,10 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       -550,300
     ]);
 
+    y2.domain([
+      -100,10
+      ])
+
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
@@ -104,6 +135,11 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
         .attr("dy", ".71em")
         .style("text-anchor", "start")
         .text("CO2 Emissions Change (Million Tonnes)");
+
+    // svg.append("g")
+    //     .attr("class", "y2 axis")
+    //     .attr("transform", "translate(" + width + " ,0)") 
+    //     .call(yAxis2)
 
     var city = svg.selectAll(".city")
         .data(cities)
