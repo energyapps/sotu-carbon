@@ -21,7 +21,7 @@ var svg = d3.select("#master_container").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var parseDate = d3.time.format("%Y").parse;
-var parseDate2 = d3.time.format("%m/%d/%Y").parse;
+// var parseDate2 = d3.time.format("%m/%d/%Y").parse;
 
 var x = d3.time.scale()
     .range([0, (width-20)]);
@@ -29,11 +29,11 @@ var x = d3.time.scale()
 var y = d3.scale.linear()
     .range([height, 0]);
 
-var y2 = d3.scale.linear()
-    .range([height, 0]);    
+// var y2 = d3.scale.linear()
+//     .range([height, 0]);    
 
 var color = d3.scale.category10();
-var color2 = d3.scale.category10();
+// var color2 = d3.scale.category10();
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -44,48 +44,48 @@ var yAxis = d3.svg.axis()
     .orient("left")
     .outerTickSize(0);   
 
-var yAxis2 = d3.svg.axis()
-    .scale(y2)    
-    .orient("right")
-    .outerTickSize(0);       
+// var yAxis2 = d3.svg.axis()
+//     .scale(y2)    
+//     .orient("right")
+//     .outerTickSize(0);       
 
 d3.tsv("data/combined_hor.tsv", function(error, data) {
   if (error) throw error;
-  d3.tsv("data/barrels.tsv", function(error, barrels) {
-    if (error) throw error;
+  // d3.tsv("data/barrels.tsv", function(error, barrels) {
+  //   if (error) throw error;
 
     // console.log(data)
     // console.log(barrels)
 
     color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date" && key.slice(-2) !== "01"; }));
   
-    color2.domain(d3.keys(barrels[0]).filter(function(key) { return key !== "date"}));
+    // color2.domain(d3.keys(barrels[0]).filter(function(key) { return key !== "date"}));
 
 
     data.forEach(function(d) {
       d.date = parseDate(d.date);
     });
 
-    barrels.forEach(function(d){
-      d.date = parseDate2(d.date)
-    })
+    // barrels.forEach(function(d){
+    //   d.date = parseDate2(d.date)
+    // })
 
     // Put it on the thing~!~~!!!
 
-    var oil = color2.domain().map(function(name) {
-      // statesGlobal.push(name)
-      return {
-        name: name,
-        values: barrels.map(function(d) {
+    // var oil = color2.domain().map(function(name) {
+    //   // statesGlobal.push(name)
+    //   return {
+    //     name: name,
+    //     values: barrels.map(function(d) {
 
-          var f = +d[name];          
-          return {
-            date: d.date,
-            barrels: f
-          };
-        })
-      };
-    });
+    //       var f = +d[name];          
+    //       return {
+    //         date: d.date,
+    //         barrels: f
+    //       };
+    //     })
+    //   };
+    // });
 
     var cities = color.domain().map(function(name) {
     	statesGlobal.push(name)
@@ -121,9 +121,9 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       -550,300
     ]);
 
-    y2.domain([
-      -70,39
-      ])
+    // y2.domain([
+    //   -70,39
+    //   ])
 
     svg.append("g")
         .attr("class", "y axis")
@@ -136,51 +136,51 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
         .style("text-anchor", "start")
         .text("CO2 Emissions Change (Million Tonnes)");
 
-    svg.append("g")
-        .attr("class", "y2 axis")
-        .attr("transform", "translate(" + (width-20) + " ,0)") 
-        .call(yAxis2)
-      .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("x", -height)
-        .attr("y", -15)
-        .attr("dy", ".71em")
-        .style("text-anchor", "start")
-        .text("% Change Net Imports of Crude Oil");
+    // svg.append("g")
+    //     .attr("class", "y2 axis")
+    //     .attr("transform", "translate(" + (width-20) + " ,0)") 
+    //     .call(yAxis2)
+    //   .append("text")
+    //     .attr("transform", "rotate(-90)")
+    //     .attr("x", -height)
+    //     .attr("y", -15)
+    //     .attr("dy", ".71em")
+    //     .style("text-anchor", "start")
+    //     .text("% Change Net Imports of Crude Oil");
 
     var city = svg.selectAll(".city")
         .data(cities)
       .enter().append("g")
         .attr("class", "city");  
 
-    var barrel = svg.selectAll(".barrel")
-        .data(oil)
-      .enter().append("g")
-        .attr("class","barrel")
+    // var barrel = svg.selectAll(".barrel")
+    //     .data(oil)
+    //   .enter().append("g")
+    //     .attr("class","barrel")
 
-    barrel.append("path")
-      .attr("class","line2")
-      .attr("d",function(d){
-        var line2 = d3.svg.line()
-          .interpolate("basis")
-          .x(function(d) { return x(d.date); })
-          .y(function(d) { return y2(d["barrels"]); })
-          return line2(d.values)
-      })
-      .attr("attribute",function(d){return d.name})
-      .style("stroke", function(d,i) {        
-        var color = "rgb(17,114,161)"
-        return color;        
-      })
-      .style("stroke-opacity","1")
-      .style("stroke-width","5")
-      .style("stroke-linecap","round")
-      // .on("mouseover",function(d){          
-      //   Highlight(d.name)       
-      // })
-      // .on("mouseout",function(d){
-      //   // d3.select(this).style("stroke-opacity","0.15")
-      // });
+    // barrel.append("path")
+    //   .attr("class","line2")
+    //   .attr("d",function(d){
+    //     var line2 = d3.svg.line()
+    //       .interpolate("basis")
+    //       .x(function(d) { return x(d.date); })
+    //       .y(function(d) { return y2(d["barrels"]); })
+    //       return line2(d.values)
+    //   })
+    //   .attr("attribute",function(d){return d.name})
+    //   .style("stroke", function(d,i) {        
+    //     var color = "rgb(17,114,161)"
+    //     return color;        
+    //   })
+    //   .style("stroke-opacity","1")
+    //   .style("stroke-width","5")
+    //   .style("stroke-linecap","round")
+    //   .on("mouseover",function(d){          
+    //     BarrelHighlight(d.name)       
+    //   })
+    //   .on("mouseout",function(d){
+    //     // d3.select(this).style("stroke-opacity","0.15")
+    //   });
 
     city.append("path")
         .attr("class", "line")
@@ -222,7 +222,12 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       		var type = "co2" 
       		var state = cities[3].name;
       		var amount = cities[3].values[7][type]    	
-      		return state + ": " + amount;
+          if (amount > 0) {
+            var plus = "+"
+          } else {
+            var plus = ""
+          };
+      		return state + ": " + plus + amount;
       	})
 
       svg.append("text")
@@ -237,11 +242,11 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
         .attr("y",height-150)
         .text("U.S. CO2 reductions ⤴")      
 
-      svg.append("text")
-        .attr("class","USText")
-        .attr("x",width/2+120)
-        .attr("y",height/2+10)
-        .text("U.S. Oil Imports ⤵")
+      // svg.append("text")
+      //   .attr("class","USText")
+      //   .attr("x",width/2+120)
+      //   .attr("y",height/2+10)
+      //   .text("U.S. Oil Imports ⤵")
 
   	d3.selectAll(".tab").on("click", function() {
   		d3.selectAll(".tab").attr("class","tab");
@@ -280,7 +285,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
   	    }
   	});		
   	pymChild.sendHeight();
-  });
+  // });
 });
 	
 
@@ -297,7 +302,12 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 		    		var type = d3.select('[attribute="'+ sug +'"]')[0][0].attributes.tabID.value; 
 		    		var state = sug;
 		    		var amount = data.values[7][type]    	
-		    		return state + ": " + amount;
+		    		if (amount > 0) {
+              var plus = "+"
+            } else {
+              var plus = ""
+            };
+            return state + ": " + plus + amount;
 	    		})
 
 			pymChild.sendHeight();
@@ -358,8 +368,13 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 
             var name = this.attributes.name.value;            
             var data = d3.select('[attribute="'+ name +'"]')[0][0].__data__;        
-            var amount = data.values[7][tabID]     
-            return name + ": " + amount;
+            var amount = data.values[7][tabID]    
+            if (amount > 0) {
+              var plus = "+"
+            } else {
+              var plus = ""
+            };
+            return name + ": " + plus + amount;
           
           })        
 
