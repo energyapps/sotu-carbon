@@ -24,7 +24,7 @@ var parseDate = d3.time.format("%Y").parse;
 // var parseDate2 = d3.time.format("%m/%d/%Y").parse;
 
 var x = d3.time.scale()
-    .range([0, (width-20)]);
+    .range([0, (width)]);
 
 var y = d3.scale.linear()
     .range([height, 0]);
@@ -213,7 +213,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 
       svg.append("text")
       	.attr("class","highlightText")
-      	.attr("x",width-30)
+      	.attr("x",width-10)
       	.attr("y","0")
         .attr("name",function(d){
           return cities[3].name;
@@ -232,13 +232,13 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 
       svg.append("text")
         .attr("class","highlightText2")
-        .attr("x",width-30)
+        .attr("x",width-10)
         .attr("y","35")
         .text("CO2 Emissions Change (Million Tonnes)")
 
       svg.append("text")
         .attr("class","USText")
-        .attr("x",320)
+        .attr("x",290)
         .attr("y",height-150)
         .text("U.S. CO2 reductions ⤴")      
 
