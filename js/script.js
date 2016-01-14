@@ -24,7 +24,7 @@ var parseDate = d3.time.format("%Y").parse;
 var parseDate2 = d3.time.format("%m/%d/%Y").parse;
 
 var x = d3.time.scale()
-    .range([0, width]);
+    .range([0, (width-20)]);
 
 var y = d3.scale.linear()
     .range([height, 0]);
@@ -54,8 +54,8 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
   d3.tsv("data/barrels.tsv", function(error, barrels) {
     if (error) throw error;
 
-    console.log(data)
-    console.log(barrels)
+    // console.log(data)
+    // console.log(barrels)
 
     color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date" && key.slice(-2) !== "01"; }));
   
@@ -76,7 +76,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       // statesGlobal.push(name)
       return {
         name: name,
-        values: data.map(function(d) {
+        values: barrels.map(function(d) {
 
           var f = +d[name];          
           return {
@@ -122,7 +122,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
     ]);
 
     y2.domain([
-      -100,10
+      -70,39
       ])
 
     svg.append("g")
@@ -136,24 +136,55 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
         .style("text-anchor", "start")
         .text("CO2 Emissions Change (Million Tonnes)");
 
-    // svg.append("g")
-    //     .attr("class", "y2 axis")
-    //     .attr("transform", "translate(" + width + " ,0)") 
-    //     .call(yAxis2)
+    svg.append("g")
+        .attr("class", "y2 axis")
+        .attr("transform", "translate(" + (width-20) + " ,0)") 
+        .call(yAxis2)
+      .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -height)
+        .attr("y", -15)
+        .attr("dy", ".71em")
+        .style("text-anchor", "start")
+        .text("% Change Net Imports of Crude Oil");
 
     var city = svg.selectAll(".city")
         .data(cities)
       .enter().append("g")
-        .attr("class", "city");
+        .attr("class", "city");  
+
+    var barrel = svg.selectAll(".barrel")
+        .data(oil)
+      .enter().append("g")
+        .attr("class","barrel")
+
+    barrel.append("path")
+      .attr("class","line2")
+      .attr("d",function(d){
+        var line2 = d3.svg.line()
+          .interpolate("basis")
+          .x(function(d) { return x(d.date); })
+          .y(function(d) { return y2(d["barrels"]); })
+          return line2(d.values)
+      })
+      .attr("attribute",function(d){return d.name})
+      .style("stroke", function(d,i) {        
+        var color = "rgb(17,114,161)"
+        return color;        
+      })
+      .style("stroke-opacity","1")
+      .style("stroke-width","5")
+      // .on("mouseover",function(d){          
+      //   Highlight(d.name)       
+      // })
+      // .on("mouseout",function(d){
+      //   // d3.select(this).style("stroke-opacity","0.15")
+      // });
 
     city.append("path")
         .attr("class", "line")
         .attr("d", function(d) { 		
-
-        if (+d.values[7].co2 < 0.01) {
-         
-        };			
-                var line = d3.svg.line()
+          var line = d3.svg.line()
           .interpolate("basis")
           .x(function(d) { return x(d.date); })
           .y(function(d) { return y(d["co2"]); })
@@ -180,7 +211,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 
       svg.append("text")
       	.attr("class","highlightText")
-      	.attr("x",width)
+      	.attr("x",width-30)
       	.attr("y","0")
       	.text(function(d){
       		var type = "co2" 
@@ -191,7 +222,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 
       svg.append("text")
         .attr("class","highlightText2")
-        .attr("x",width)
+        .attr("x",width-30)
         .attr("y","35")
         .text("CO2 Emissions Change (Million Tonnes)")
 
@@ -199,7 +230,13 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
         .attr("class","USText")
         .attr("x",320)
         .attr("y",height-150)
-        .text("United States ⤴")      
+        .text("U.S. CO2 reductions ⤴")      
+
+      svg.append("text")
+        .attr("class","USText")
+        .attr("x",width/2+120)
+        .attr("y",height/2+10)
+        .text("U.S. Oil Imports ⤵")
 
   	d3.selectAll(".tab").on("click", function() {
   		d3.selectAll(".tab").attr("class","tab");

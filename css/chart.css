@@ -10,7 +10,7 @@
   display: none;
 }
 
-.line {
+.line2, .line {
   fill: none;
   stroke-width:1.5px;
   /*stroke-linecap:round;*/
