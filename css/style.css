@@ -141,10 +141,26 @@ Map
         }
 
         .headline {
-            padding-right: 25%;
-            padding-left: 0px;
+            padding-right: 12%;
+            padding-left: 12%;
+            text-align: center;            
         }
-`
+
+        .headline p {
+            color: #333 !important;    
+        }   
+
+        .typea {
+            color: #93C528;
+        }
+
+        .typeb {
+            font-family: "Avenir LT W02 85 Heavy",verdana,sans-serif;
+        }
+
+        .typec {
+            font-style: italic;
+        }
 
         .unit {
             position: absolute;

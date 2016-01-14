@@ -174,6 +174,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       })
       .style("stroke-opacity","1")
       .style("stroke-width","5")
+      .style("stroke-linecap","round")
       // .on("mouseover",function(d){          
       //   Highlight(d.name)       
       // })
@@ -197,6 +198,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
           return color;        
         })
         .style("stroke-opacity","0.10")
+        .style("stroke-linecap","round")
         .on("mouseover",function(d){        	
         	Highlight(d.name)       
         })
