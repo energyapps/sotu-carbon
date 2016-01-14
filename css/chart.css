@@ -254,9 +254,23 @@
 @media only screen and (min-width: 1030px) { 
 	#car_cont {display: none}
 }
-		
+
+@media only screen and (max-width: 1000px) { 
+	.USText {
+		display: none;
+	}
+}	
+
+
 @media only screen and (max-width: 470px) { 
 	#about {
 		display: none;
 	}
+	.highlightText {
+		font-size: 28px;
+	}
+	.highlightText2 {
+		font-size: 16px;
+	}
+
 }
