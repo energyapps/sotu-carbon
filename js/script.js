@@ -215,6 +215,9 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       	.attr("class","highlightText")
       	.attr("x",width-30)
       	.attr("y","0")
+        .attr("name",function(d){
+          return cities[3].name;
+        })
       	.text(function(d){
       		var type = "co2" 
       		var state = cities[3].name;
@@ -288,10 +291,11 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 			d3.select('[attribute="United States"]').style("stroke-opacity","0.6")
       d3.select('[attribute="'+ sug +'"]').style("stroke-opacity","0.8")        				
 			d3.select(".highlightText")
+        .attr("name", sug)        
 				.text(function(d){					
 					var data = d3.select('[attribute="'+ sug +'"]')[0][0].__data__;
 		    		var type = d3.select('[attribute="'+ sug +'"]')[0][0].attributes.tabID.value; 
-		    		var state = data.name;
+		    		var state = sug;
 		    		var amount = data.values[7][type]    	
 		    		return state + ": " + amount;
 	    		})
@@ -347,6 +351,17 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
       d3.select(".highlightText2")        
         .text(ctext) 
 
+// d3.select('[attribute="United States"]')
+
+      d3.select(".highlightText")
+        .text(function(d){  
+
+            var name = this.attributes.name.value;            
+            var data = d3.select('[attribute="'+ name +'"]')[0][0].__data__;        
+            var amount = data.values[7][tabID]     
+            return name + ": " + amount;
+          
+          })        
 
 			pymChild.sendHeight();
 		}			
