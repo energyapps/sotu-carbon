@@ -302,7 +302,7 @@ d3.tsv("data/combined_hor.tsv", function(error, data) {
 
       d3.selectAll('.y.axis').remove();
       d3.select(".baseline").remove();
-      d3.select(".USText").remove();
+      d3.selectAll(".USText").remove();
 
       if (tabID == "co2") {
         y.domain([
