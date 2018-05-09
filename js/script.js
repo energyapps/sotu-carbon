@@ -45,7 +45,7 @@ var yAxis = d3.svg.axis()
   .orient( "left" )
   .outerTickSize( 0 );
 
-d3.tsv( "data/combined_hor.tsv", function ( error, data ) {
+d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
   if ( error ) throw error
 
   // ensure one tick per year based on data
@@ -152,20 +152,20 @@ d3.tsv( "data/combined_hor.tsv", function ( error, data ) {
   svg.append( "text" )
     .attr( "class", "highlightText" )
     .attr( "x", width - 10 )
-    .attr( "y", "0" )
+    .attr( "y", "-10" )
     .attr( "name", function ( d ) {
-      return countries[ 3 ].name;
+      return countries[ 134 ].name;
     } )
     .text( function ( d ) {
       var type = "co2"
-      var state = countries[ 3 ].name;
-      var amount = countries[ 3 ].values[ 7 ][ type ]
+      var country = countries[ 134 ].name;
+      var amount = countries[ 134 ].values[ 9 ][ type ]
       if ( amount > 0 ) {
         var plus = "+"
       } else {
         var plus = ""
       };
-      return state + ": " + plus + amount;
+      return country + ": " + plus + amount;
     } )
 
   svg.append( "text" )
@@ -177,7 +177,7 @@ d3.tsv( "data/combined_hor.tsv", function ( error, data ) {
   svg.append( "text" )
     .attr( "class", "USText" )
     .attr( "x", 290 )
-    .attr( "y", height - 150 )
+    .attr( "y", height - 120 )
     .text( "U.S. CO2 reductions ⤴" )
 
   d3.selectAll( ".tab" ).on( "click", function () {
@@ -221,7 +221,6 @@ d3.tsv( "data/combined_hor.tsv", function ( error, data ) {
 } );
 
 function Highlight( sug ) {
-
   // Call d3 THIS highlight, everything else lowlight
   d3.selectAll( ".line" ).style( "stroke-opacity", "0.10" )
   d3.select( '[attribute="United States"]' ).style( "stroke-opacity", "0.6" )
@@ -231,14 +230,14 @@ function Highlight( sug ) {
     .text( function ( d ) {
       var data = d3.select( '[attribute="' + sug + '"]' )[ 0 ][ 0 ].__data__;
       var type = d3.select( '[attribute="' + sug + '"]' )[ 0 ][ 0 ].attributes.tabID.value;
-      var state = sug;
-      var amount = data.values[ 7 ][ type ]
+      var country = sug;
+      var amount = data.values[ 9 ][ type ]
       if ( amount > 0 ) {
         var plus = "+"
       } else {
         var plus = ""
       };
-      return state + ": " + plus + amount;
+      return country + ": " + plus + amount;
     } )
 
   pymChild.sendHeight();
@@ -299,19 +298,16 @@ function update( tabID ) {
 
   d3.select( ".highlightText" )
     .text( function ( d ) {
-
       var name = this.attributes.name.value;
       var data = d3.select( '[attribute="' + name + '"]' )[ 0 ][ 0 ].__data__;
-      var amount = data.values[ 7 ][ tabID ]
+      var amount = data.values[ 9 ][ tabID ]
       if ( amount > 0 ) {
         var plus = "+"
       } else {
         var plus = ""
       };
       return name + ": " + plus + amount;
-
     } )
-
   pymChild.sendHeight();
 }
 
