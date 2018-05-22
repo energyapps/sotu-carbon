@@ -1,16 +1,16 @@
 // Initiate pym
 var pymChild = new pym.Child();
 
-var statesGlobal = [];
+var statesGlobal = [],
+  co2Domain = [],
+  pccDomain = [];
 
 //indexes, Width and height, Padding, parameters
 var j = 0; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
-var StandardPadding = 20;
 
-var w = parseInt( d3.select( "#master_container" ).style( "width" ) )
-// var h = (AxisPaddingTop + StandardPadding/2 + ((totes)*2*r) + (totes*BubblePadding)+BubblePadding*1.5+20)
-
-var margin = {
+var w = parseInt( d3.select( "#master_container" ).style( "width" ) ),
+  StandardPadding = 20,
+  margin = {
     top: 20,
     right: 20,
     bottom: 30,
@@ -26,22 +26,21 @@ var svg = d3.select( "#master_container" ).append( "svg" )
   .attr( "transform", "translate(" + margin.left + "," + margin.top + ")" );
 
 var parseDate = d3.time.format( "%Y" ).parse;
-// var parseDate2 = d3.time.format("%m/%d/%Y").parse;
 
-var x = d3.time.scale()
+var xScale = d3.time.scale()
   .range( [ 0, ( width ) ] );
 
-var y = d3.scale.linear()
+var yScale = d3.scale.linear()
   .range( [ height, 0 ] );
 
 var color = d3.scale.category10();
 
 var xAxis = d3.svg.axis()
-  .scale( x )
+  .scale( xScale )
   .orient( "bottom" );
 
 var yAxis = d3.svg.axis()
-  .scale( y )
+  .scale( yScale )
   .orient( "left" )
   .outerTickSize( 0 );
 
@@ -60,7 +59,9 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
   } );
 
   // declare array variable for combined data
-  var comboValues = [];
+  var comboValues = [],
+    co2Values = [],
+    pccValues = [];
 
   var countries = color.domain().map( function ( name ) {
     statesGlobal.push( name )
@@ -69,12 +70,14 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
       values: data.map( function ( d ) {
         var f = +d[ name ];
         comboValues.push( f ); // push values to combo array
+        co2Values.push( f ); // push values to combo array
 
         // Loops and adds in other intensities!
         for ( var k in d ) {
           if ( k.slice( 0, -2 ) == name && k.slice( -2 ) == 01 ) {
             var g = +d[ k ];
             comboValues.push( g ); // push values to combo array
+            pccValues.push( g ); // push values to combo array
           }
         }
         return {
@@ -86,7 +89,7 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     };
   } );
 
-  x.domain( d3.extent( data, function ( d ) {
+  xScale.domain( d3.extent( data, function ( d ) {
     return d.date;
   } ) );
 
@@ -96,7 +99,11 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     .call( xAxis );
 
   // calculate Y axis min/max from combo array
-  y.domain( [ d3.min( comboValues ), d3.max( comboValues ) / 10 ] );
+  yScale.domain( [ d3.min( comboValues ), d3.max( comboValues ) / 10 ] );
+  // assign global domain for CO2 chart (used on tab click to redraw axis)
+  co2Domain = [ Math.floor( d3.min( co2Values ) ), Math.ceil( d3.max( co2Values ) / 10 ) ];
+  // assign global domain for PCC chart (used on tab click to redraw axis)
+  pccDomain = [ Math.floor( d3.min( pccValues ) ), Math.ceil( d3.max( pccValues ) / 5 ) ];
 
   svg.append( "g" )
     .attr( "class", "y axis" )
@@ -120,10 +127,10 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
       var line = d3.svg.line()
         .interpolate( "basis" )
         .x( function ( d ) {
-          return x( d.date );
+          return xScale( d.date );
         } )
         .y( function ( d ) {
-          return y( d[ "co2" ] );
+          return yScale( d[ "co2" ] );
         } )
       return line( d.values )
     } )
@@ -139,10 +146,10 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     .style( "stroke-linecap", "round" )
     .on( "mouseover", function ( d ) {
       Highlight( d.name )
-    } )
-    .on( "mouseout", function ( d ) {
-      // d3.select(this).style("stroke-opacity","0.15")
     } );
+  /*.on( "mouseout", function ( d ) {
+    // d3.select(this).style("stroke-opacity","0.15")
+  } );*/
 
   d3.select( '[attribute="United States"]' )
     .style( "stroke-width", "5" )
@@ -154,7 +161,7 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     .attr( "x", width - 10 )
     .attr( "y", "-10" )
     .attr( "name", function ( d ) {
-      return countries[ 134 ].name;
+      return countries[ 134 ].name; // load with US data
     } )
     .text( function ( d ) {
       var type = "co2"
@@ -184,8 +191,10 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     d3.selectAll( ".tab" ).attr( "class", "tab" );
     this.className = "tab active";
     d3.select( "#about_extend" ).attr( "class", "" );
-    d3.select( "#about" ).attr( "class", "about_tab" )
-    update( this.id )
+    d3.select( "#about" ).attr( "class", "about_tab" );
+    update( this.id );
+    // output yscale domain
+    console.log( this.id, yScale.domain() );
   } );
 
   d3.select( "#about" ).on( "click", function () {
@@ -197,7 +206,6 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
   //remove about on click out
   $( document ).on( 'click', function ( event ) {
     if ( !$( event.target ).closest( '#about' ).length ) {
-      // d3.select("#about_extend").attr("class","");
       d3.select( "#about" ).attr( "class", "about_tab" )
       $( "#about_extend" ).css( "display", "none" );
     }
@@ -212,7 +220,7 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
       return "No country found"
     },
     onSelect: function ( suggestion ) {
-      // CAll function that highlights selected line
+      // Call function that highlights selected line
       Highlight( suggestion.value )
     }
   } );
@@ -244,24 +252,19 @@ function Highlight( sug ) {
 }
 
 function update( tabID ) {
-  var w = parseInt( d3.select( "#master_container" ).style( "width" ) )
+  var w = parseInt( d3.select( "#master_container" ).style( "width" ) );
 
   d3.selectAll( '.y.axis' ).remove();
   d3.select( ".baseline" ).remove();
   d3.selectAll( ".USText" ).remove();
 
   if ( tabID == "co2" ) {
-    /*y.domain( [
-          -550, 300
-        ] );*/
-    y.domain( [ d3.min( comboValues ), d3.max( comboValues ) / 10 ] );
+    yScale.domain( co2Domain );
 
     var ctext = "CO2 Emissions Change (Million Tonnes)";
 
   } else {
-    y.domain( [
-          -10, 6
-        ] );
+    yScale.domain( pccDomain );
     var ctext = "CO2 Emissions Change (Tonnes/Person)";
   };
 
@@ -276,7 +279,7 @@ function update( tabID ) {
     .style( "text-anchor", "start" )
     .text( ctext );
 
-  var country = svg.selectAll( ".country" ).selectAll( "path" )
+  var country = svg.selectAll( ".country" ).selectAll( "path" );
 
   country.transition()
     .duration( 1000 )
@@ -284,19 +287,17 @@ function update( tabID ) {
       var line = d3.svg.line()
         .interpolate( "basis" )
         .x( function ( d ) {
-          return x( d.date );
+          return xScale( d.date );
         } )
         .y( function ( d ) {
-          return y( d[ tabID ] );
+          return yScale( d[ tabID ] );
         } )
       return line( d.values )
     } )
-    .attr( "tabID", tabID )
+    .attr( "tabID", tabID );
 
   d3.select( ".highlightText2" )
-    .text( ctext )
-
-  // d3.select('[attribute="United States"]')
+    .text( ctext );
 
   d3.select( ".highlightText" )
     .text( function ( d ) {
