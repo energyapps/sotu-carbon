@@ -251,9 +251,11 @@ function update( tabID ) {
   d3.selectAll( ".USText" ).remove();
 
   if ( tabID == "co2" ) {
-    y.domain( [
+    /*y.domain( [
           -550, 300
-        ] );
+        ] );*/
+    y.domain( [ d3.min( comboValues ), d3.max( comboValues ) / 10 ] );
+
     var ctext = "CO2 Emissions Change (Million Tonnes)";
 
   } else {
