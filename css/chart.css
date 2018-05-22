@@ -237,15 +237,17 @@ p.fine-print {
 	right: 0px;
 }
 
-sup,
+/*sup,
 sub {
 	vertical-align: baseline;
 	position: relative;
 	top: 0em;
-}
+}*/
 
 sub {
+	font-size: 70% !important;
 	top: -0.1em;
+	vertical-align: sub;
 }
 
 h2 sub {

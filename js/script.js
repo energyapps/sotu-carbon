@@ -114,7 +114,7 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     .attr( "y", 6 )
     .attr( "dy", ".71em" )
     .style( "text-anchor", "start" )
-    .text( "CO2 Emissions Change (Million Tonnes)" );
+    .text( "CO₂ Emissions Change (Million Tonnes)" );
 
   var country = svg.selectAll( ".country" )
     .data( countries )
@@ -179,13 +179,13 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     .attr( "class", "highlightText2" )
     .attr( "x", width - 10 )
     .attr( "y", "35" )
-    .text( "CO2 Emissions Change (Million Tonnes)" )
+    .text( "CO₂ Emissions Change (Million Tonnes)" )
 
   svg.append( "text" )
     .attr( "class", "USText" )
     .attr( "x", 290 )
     .attr( "y", height - 120 )
-    .text( "U.S. CO2 reductions ⤴" )
+    .text( "U.S. CO₂ reductions ⤴" )
 
   d3.selectAll( ".tab" ).on( "click", function () {
     d3.selectAll( ".tab" ).attr( "class", "tab" );
@@ -194,7 +194,7 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     d3.select( "#about" ).attr( "class", "about_tab" );
     update( this.id );
     // output yscale domain
-    console.log( this.id, yScale.domain() );
+    // console.log( this.id, yScale.domain() );
   } );
 
   d3.select( "#about" ).on( "click", function () {
@@ -261,11 +261,11 @@ function update( tabID ) {
   if ( tabID == "co2" ) {
     yScale.domain( co2Domain );
 
-    var ctext = "CO2 Emissions Change (Million Tonnes)";
+    var ctext = "CO₂ Emissions Change (Million Tonnes)";
 
   } else {
     yScale.domain( pccDomain );
-    var ctext = "CO2 Emissions Change (Tonnes/Person)";
+    var ctext = "CO₂ Emissions Change (Tonnes/Person)";
   };
 
   svg.append( "g" )
