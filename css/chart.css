@@ -129,9 +129,26 @@ input#autocompletez {
 	width: 100%;
 }
 
-#tabs .tab,
-#tabs .about_tab {
+#tabs .tab {
 	background-color: rgb(48, 50, 51);
+	position: relative;
+	margin-left: 15px;
+	float: left;
+	padding: 5px 10px 3px 10px;
+	cursor: pointer;
+	top: -28px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#tabs .about_tab {
+	background-color: white;
+	border: 1px solid rgb(48, 50, 51);
+	color: black;
 	position: relative;
 	margin-left: 15px;
 	float: left;
@@ -151,7 +168,7 @@ input#autocompletez {
 	min-width: 350px;
 	padding: 10px;
 	font-family: "Avenir LT W02 35 Light", verdana, sans-serif;
-	background-color: #e1f4fb;
+	/*background-color: #e1f4fb;*/
 	color: #000;
 	font-size: 12px;
 	background: rgb(225, 225, 225);
@@ -163,9 +180,12 @@ input#autocompletez {
 	display: none
 }
 
-#tabs .tab.active,
-.about_tab.active {
+#tabs .tab.active {
 	background-color: rgb(17, 114, 161) !important;
+}
+
+#tabs .about_tab.active {
+	background-color: rgb(225, 225, 225)!important;
 }
 
 #about_extend.active {

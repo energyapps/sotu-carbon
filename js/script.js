@@ -3,10 +3,13 @@ var pymChild = new pym.Child();
 
 var statesGlobal = [],
   co2Domain = [],
-  pccDomain = [];
+  pccDomain = [],
+  g20Domain = [];
+
+var g20byGDP = [ "United States", "China", "Japan", "Germany", "France", "United Kingdom", "Brazil", "India", "Italy", "Canada", "Russia", "Australia", "Korea", "Mexico", "Turkey", "Indonesia", "Saudi Arabia", "Argentina", "South Africa" ];
 
 //indexes, Width and height, Padding, parameters
-var j = 0; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1
+var j = 0; // this is the index of which "type" of data we're looking at. Gross=0, PerCap=1, G20 = 2
 
 var w = parseInt( d3.select( "#master_container" ).style( "width" ) ),
   StandardPadding = 20,
@@ -61,7 +64,8 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
   // declare array variable for combined data
   var comboValues = [],
     co2Values = [],
-    pccValues = [];
+    pccValues = [],
+    g20Values = [];
 
   var countries = color.domain().map( function ( name ) {
     statesGlobal.push( name )
@@ -89,22 +93,44 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     };
   } );
 
+  // Set X-axis scale
   xScale.domain( d3.extent( data, function ( d ) {
     return d.date;
   } ) );
 
+  // Append X-axis
   svg.append( "g" )
     .attr( "class", "x axis" )
     .attr( "transform", "translate(0," + height + ")" )
     .call( xAxis );
 
-  // calculate Y axis min/max from combo array
-  yScale.domain( [ d3.min( comboValues ), d3.max( comboValues ) / 10 ] );
-  // assign global domain for CO2 chart (used on tab click to redraw axis)
-  co2Domain = [ Math.floor( d3.min( co2Values ) ), Math.ceil( d3.max( co2Values ) / 10 ) ];
-  // assign global domain for PCC chart (used on tab click to redraw axis)
-  pccDomain = [ Math.floor( d3.min( pccValues ) ), Math.ceil( d3.max( pccValues ) / 5 ) ];
+  // Filter coutries array to G20 only countries
+  var g20only = countries.filter( function ( el ) {
+    // check if index exists in G20 country names array
+    if ( g20byGDP.indexOf( el.name ) >= 0 ) {
+      el.values.forEach( function ( v ) {
+        // console.log( el.name, v.co2 );
+        // push values to concatenated values array (used for setting axis domain)
+        g20Values.push( v.co2 );
+      } )
+    }
+    // return only the items that match the country names array
+    return g20byGDP.indexOf( el.name ) >= 0;
+  } );
+  // console.log( countries );
+  // console.log( g20only, g20Values );
 
+  // Calculate Y axis min/max from combo values array
+  yScale.domain( [ d3.min( comboValues ), d3.max( comboValues ) / 10 ] );
+  // Set global domain for CO2 lines (used on tab click to redraw axis)
+  co2Domain = [ Math.floor( d3.min( co2Values ) ), Math.ceil( d3.max( co2Values ) / 10 ) ];
+  // Set global domain for PCC lines (used on tab click to redraw axis)
+  pccDomain = [ Math.floor( d3.min( pccValues ) ), Math.ceil( d3.max( pccValues ) / 5 ) ];
+  // Set global domain for G20 lines (used on tab click to redraw axis)
+  g20Domain = [ Math.floor( d3.min( g20Values ) ), Math.ceil( d3.max( g20Values ) ) ];
+  // console.log( g20Domain, d3.min( g20Values ), d3.max( g20Values ) );
+
+  // draw initial chart axes
   svg.append( "g" )
     .attr( "class", "y axis" )
     .call( yAxis )
@@ -116,11 +142,13 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     .style( "text-anchor", "start" )
     .text( "CO₂ Emissions Change (Million Tonnes)" );
 
+  // append g containers for each country line
   var country = svg.selectAll( ".country" )
-    .data( countries )
+    .data( countries ) // bind data to country class
     .enter().append( "g" )
     .attr( "class", "country" );
 
+  // append path for each country line
   country.append( "path" )
     .attr( "class", "line" )
     .attr( "d", function ( d ) {
@@ -132,14 +160,14 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
         .y( function ( d ) {
           return yScale( d[ "co2" ] );
         } )
-      return line( d.values )
+      return line( d.values );
     } )
     .attr( "attribute", function ( d ) {
       return d.name
     } )
-    .attr( "tabID", "co2" )
+    .attr( "tabID", "co2" ) // load CO2 tab initially
     .style( "stroke", function ( d, i ) {
-      var color = "#111"
+      var color = "#111";
       return color;
     } )
     .style( "stroke-opacity", "0.10" )
@@ -151,17 +179,19 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     // d3.select(this).style("stroke-opacity","0.15")
   } );*/
 
+  // change stroke attributes for US data line
   d3.select( '[attribute="United States"]' )
     .style( "stroke-width", "5" )
     .style( "stroke-opacity", "0.6" )
     .style( "stroke", "rgb(139,204,0)" )
 
+  // append text box with highlight information for each data line
   svg.append( "text" )
     .attr( "class", "highlightText" )
     .attr( "x", width - 10 )
     .attr( "y", "-10" )
     .attr( "name", function ( d ) {
-      return countries[ 134 ].name; // load with US data
+      return countries[ 134 ].name; // preload with US data info
     } )
     .text( function ( d ) {
       var type = "co2"
@@ -172,38 +202,65 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
       } else {
         var plus = ""
       };
-      return country + ": " + plus + amount;
+      return country + ": " + plus + amount; // format text
     } )
 
+  // append text description
   svg.append( "text" )
     .attr( "class", "highlightText2" )
     .attr( "x", width - 10 )
     .attr( "y", "35" )
     .text( "CO₂ Emissions Change (Million Tonnes)" )
 
+  // append text marker identifying the US data line
   svg.append( "text" )
     .attr( "class", "USText" )
     .attr( "x", 290 )
     .attr( "y", height - 120 )
     .text( "U.S. CO₂ reductions ⤴" )
 
+  // add click event listener to tab buttons
   d3.selectAll( ".tab" ).on( "click", function () {
     d3.selectAll( ".tab" ).attr( "class", "tab" );
+    // add active class on click
     this.className = "tab active";
+    // hide all about info
     d3.select( "#about_extend" ).attr( "class", "" );
     d3.select( "#about" ).attr( "class", "about_tab" );
+    // change id to current tab
     update( this.id );
+
+    if ( this.id != "g20" ) {
+      country.data( countries );
+    } else {
+      country.data( countries.filter( function ( el ) {
+        // return only the items that match the country names array
+        return g20byGDP.indexOf( el.name ) >= 0;
+      } ) );
+    }
+
     // output yscale domain
-    // console.log( this.id, yScale.domain() );
+    console.log( this.id, yScale.domain(), country.data() );
   } );
 
+  // show only G20 data on click
+  /*d3.select( "#g20" ).on( "click", function ( d ) {
+    country.data( function () {
+      return g20only;
+    } );
+    yScale.domain( g20Domain );
+    // output yscale domain
+    console.log( this.id, yScale.domain(), country.data() );
+  } );*/
+
+  // add click event listener to about button on click
   d3.select( "#about" ).on( "click", function () {
     this.className = "about_tab active"
-    $( "#about_extend" ).addClass( "active" );
-    $( "#about_extend" ).css( "display", "block" );
+    $( "#about_extend" ).addClass( "active" ); // add active class
+    $( "#about_extend" ).css( "display", "block" ); // show data information
   } );
 
-  //remove about on click out
+  // hide about content on click out
   $( document ).on( 'click', function ( event ) {
     if ( !$( event.target ).closest( '#about' ).length ) {
       d3.select( "#about" ).attr( "class", "about_tab" )
@@ -211,6 +268,7 @@ d3.tsv( "data/combined_international_CO2_2015.tsv", function ( error, data ) {
     }
   } );
 
+  // format autocomplete field
   $( '#autocompletez' ).autocomplete( {
     lookup: statesGlobal,
     lookupLimit: 10,
@@ -254,18 +312,19 @@ function Highlight( sug ) {
 function update( tabID ) {
   var w = parseInt( d3.select( "#master_container" ).style( "width" ) );
 
-  d3.selectAll( '.y.axis' ).remove();
+  d3.selectAll( ".y.axis" ).remove();
   d3.select( ".baseline" ).remove();
   d3.selectAll( ".USText" ).remove();
 
   if ( tabID == "co2" ) {
     yScale.domain( co2Domain );
-
     var ctext = "CO₂ Emissions Change (Million Tonnes)";
-
-  } else {
+  } else if ( tabID == "pcc" ) {
     yScale.domain( pccDomain );
     var ctext = "CO₂ Emissions Change (Tonnes/Person)";
+  } else if ( tabID == "g20" ) {
+    yScale.domain( g20Domain );
+    var ctext = "CO₂ Emissions Change (Million Tonnes)";
   };
 
   svg.append( "g" )
@@ -295,6 +354,28 @@ function update( tabID ) {
       return line( d.values )
     } )
     .attr( "tabID", tabID );
+
+  // G20 BUTTON
+  /*if ( tabID == "g20" ) {
+    country.data( g20only ) // set data to G20 only
+      .transition()
+      .duration( 1000 )
+      .attr( "d", function ( d ) {
+        var line = d3.svg.line()
+          .interpolate( "basis" )
+          .x( function ( d ) {
+            return xScale( d.date );
+          } )
+          .y( function ( d ) {
+            return yScale( d[ tabID ] );
+          } )
+        return line( d.values )
+      } )
+      .attr( "tabID", tabID );
+
+    yScale.domain( g20Domain );
+    var ctext = "CO₂ Emissions Change (Million Tonnes)";
+  };*/
 
   d3.select( ".highlightText2" )
     .text( ctext );
